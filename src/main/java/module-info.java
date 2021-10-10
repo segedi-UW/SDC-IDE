@@ -5,6 +5,6 @@ module com.sdc.tthree.sdcide {
     requires org.controlsfx.controls;
     requires org.kordamp.bootstrapfx.core;
 
-    opens com.sdc.t3.sdcide to javafx.fxml;
-    exports com.sdc.t3.sdcide;
+    opens com.sdc.tthree.sdcide to javafx.fxml;
+    exports com.sdc.tthree.sdcide;
 }

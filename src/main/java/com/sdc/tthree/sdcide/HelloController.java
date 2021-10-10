@@ -1,4 +1,4 @@
-package com.sdc.t3.sdcide;
+package com.sdc.tthree.sdcide;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
