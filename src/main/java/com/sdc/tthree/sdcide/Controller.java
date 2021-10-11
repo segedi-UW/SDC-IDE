@@ -17,7 +17,4 @@ public class Controller {
     protected void onHelloButtonClick() {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
-
-    public void onHelloButtonClic(ActionEvent actionEvent) {
-    }
 }
