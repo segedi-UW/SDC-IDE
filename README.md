@@ -41,7 +41,7 @@ Now I want to look at the FXML file. In our Application it is under our module r
     </children>
 </VBox>
 ~~~
-As you can see FXML is XML based and follows a similar format using angle brackets for delimiters. Note that each follows the format (besides special `<?command data>)` of `<Object [properties]/>` or `<Object [properties]></Object>`. When using the `<></>` notation properties can be specifed using angled brackets as shown for the padding property above. Some properties like padding need to be specified in this way rather than the `property="data"` format in the header.
+As you can see FXML is XML based and follows a similar format using angle brackets for delimiters. Note that each follows the format (besides special `<?command data>`) of `<Object [properties]/>` or `<Object [properties]></Object>`. When using the `<></>` notation properties can be specifed using angled brackets as shown for the padding property above. Some properties like padding need to be specified in this way rather than the `property="data"` format in the header.
 The first line provides basic encoding and document type. The next lines are import statments. In FXML when we specify what FXML objects to add we need to import them. Note that these imports include our own custom classes (more on that below). _Intellij is a blessing for imports_.
 In this FXML file our root (outermost) Node is the `VBox`. The root Node has some special properties that we can / need to specify. The first is the **xmlns:fx**. This is necessary if we plan on utilizing _injection_ to populate our Controller class with `fx:id` named objects (discussed later).
 **Note that `fx:id` is different than `id`! `id` is used with css to define a particular nodes style**
@@ -161,11 +161,11 @@ The id selector is a '#' followed by the id name followed by brackets. Here is t
     -fx-underline: true;
 }
 ```
-The **root** class is an example of a class override, since the stylesheet that JavaFX uses as default has a root styleclass that we change here. It is the base skin for our JavaFX Application that we can style to have a uniform style amoung all of our components. The `#textExample` is an example of an id selector, and the `.exampleClass` is an example of a class that we defined on our own. 
+The **root** class is an example of a class override, since the stylesheet that JavaFX uses as default has a root styleclass that we change here. It is the base skin for our JavaFX Application that we can style to have a uniform style among all of our components. The `#textExample` is an example of an id selector, and the `.exampleClass` is an example of a class that we defined on our own. 
+Just like in normal CSS, a `Node` can have many style classes, but only one id. Unlike normal CSS, id's are not required to be unique.
+Not every Node type supports all JavaFX CSS properties - see the official JavaFX CSS Reference for specifics.
 - If you are interested in state CSS (hovering, selected, etc) check out psuedo classes in JavaFX CSS in the reference.
 - If you want to know more about subclassing and specifics such as `.overiddenClass .subclass {//content}` you should see the reference as well.
-
-Check out the CSS references below for more information.
 
 ### Alert and Dialog
 The JavaFX `Alert` and `Dialog` class have there own scenes and stage, and as the name suggests act as modal pop ups that require the user to complete before returning. The best practice for clean code is to create a subclass to design. For example, consider the case you want to create an dialog that prompts the user to save their workspace before exiting the application...
@@ -245,10 +245,10 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 
 ## JavaFX Gotchas
 - JavaFX is not thread safe - see concurrent reference for how to use concurrency.
-- All graphical methods (`show()`, `showAndWait()`, etc.) must be done on the _JavaFX Application thread_. If a different thread is necessary, then `Platform.runLater(Runnable)` can be used.
+- All graphical methods (`show()`, `showAndWait()`, etc.) must be done on the _JavaFX Application thread_. If a different thread is being used, then `Platform.runLater(Runnable)` can be used.
 
 ## JavaFX Platform Util
-- `Platform.exit()` can be used to exit the JavaFX Application at any time. When this method is called **all** `Stage`s are closed and the JavaFX Application Thread terminates.
+- `Platform.exit()` can be used to exit the JavaFX Application at any time. When this method is called **all** `Stage`s are closed and the JavaFX Application Thread terminates. Execution returns to where the Application was launched from. JavaFX `Application` class has a `close()` method that can be overridden for normal Application termination procedures. 
 - `Platform.runLater(Runnable)` can be used to run graphical methods on the JavaFX Application thread.
 
 ## JavaFX Resources
@@ -259,7 +259,7 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 ### FXML
 - [Getting Started With FXML](https://docs.oracle.com/javafx/2/get_started/fxml_tutorial.htm)
 - [Jenkov FXML Tutorial](http://tutorials.jenkov.com/javafx/fxml.html)
-- [FXML Reference](https://docs.oracle.com/javafx/2/api/javafx/fxml/doc-files/introduction_to_fxml.html#scripting))
+- [FXML Reference](https://docs.oracle.com/javafx/2/api/javafx/fxml/doc-files/introduction_to_fxml.html#scripting)
 - [Mastering FXML](https://docs.oracle.com/javafx/2/fxml_get_started/jfxpub-fxml_get_started.htm)
 
 ### Bindings API
