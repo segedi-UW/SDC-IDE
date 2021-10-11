@@ -1,0 +1,12 @@
+// From reference
+.root {
+    -fx-font-size: 16pt;
+    -fx-font-family: "Courier New";
+    -fx-base: rgb(132, 145, 47);
+    -fx-background: rgb(225, 228, 203);
+}
+
+#textExample {
+    -fx-font-size: 8pt;
+    -fx-underline: true;
+}
