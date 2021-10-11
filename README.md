@@ -1,5 +1,9 @@
 # WIP IDE for SDC project
 ## How JavaFX Works
+JavaFX uses a scene graph that paints components onto the screen. The lowest form of a visible object is the `Node` class. The `Node` class should not be extended in the vast majority of cases. To be honest I have not done it to date, but I am fairly certain it can be done.
+JavaFX uses Properties and Bindings to separate data and code - UI components will be automatically updated when the state of a variable changes provided we use this API. It is necessary that we do a great job working with this if we want an easy to manage system - I will create a tutorial on this shortly (as of 10/11/2021 no tutorial). There are plenty of online tutorials as well etc.
+
+## Our Application
 So with how it is currently setup on our configuration, our application starts in the App class. This class extends Application, and later on we may launch externally from a different class but for now it includes a main method that launches JavaFX. Any JavaFX application must be lanched before most of the JavaFX Objects can be used (visible graphics etc.). In the basic App class we have the following:
 ```
 public class App extends Application {
@@ -296,3 +300,4 @@ May be useful for later on, may not
 - [Bean Class JavaFX](https://www.omnijava.com/2017/08/29/the-bean-class-for-javafx-programming/) - Style of Property classes
 - [Pattern Documentation](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#sum) - Java Regex
 - [regex101](https://regex101.com/) - use the java8 tab, great for testing regex with documentation and help
+- [Preferences](https://docs.oracle.com/javase/8/docs/api/java/util/prefs/Preferences.html) - Automatically store and retrieve user preferences (Database-esque)
