@@ -20,15 +20,17 @@ public class App extends Application {
     }
 
     public static FXMLLoader fxmlLoader(String resource) {
-        URL url = App.class.getResource(resource);
-        if (url == null) throw new NullPointerException("FXML resource \"" + resource + "\" was not found");
-        return new FXMLLoader(url);
+        return new FXMLLoader(resourceURL(resource));
     }
 
     public static void addStylesheet(Scene scene) {
-        URL url = App.class.getResource("stylesheet.css");
-        if (url == null) throw new NullPointerException("Default stylesheet was not found");
-        scene.getStylesheets().add(url.toExternalForm());
+        scene.getStylesheets().add(resourceURL("stylesheet.css").toExternalForm());
+    }
+
+    public static URL resourceURL(String resource) {
+        URL url = App.class.getResource(resource);
+        if (url == null) throw new NullPointerException("Resource \"" + resource + "\" was not found");
+        return url;
     }
 
     public static void main(String[] args) {
