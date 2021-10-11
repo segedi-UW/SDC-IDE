@@ -1,4 +1,4 @@
-# WIP IDE for SDC project
+# Overview
 
 ## Intro to Maven
 We are using Maven to build our projects since it saves us the hassle of manually downloading all the dependencies and we can update dependencies very easily later on by just changing one file - the pom.xml file. In Maven, this is the build options file that manages our dependencies and takes care of any other tasks we give it. If you have questions on how it works feel free to ask me, but there is not a huge point in me creating an in depth tutorial on the ins and outs of Maven for our project currently.
@@ -269,6 +269,7 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 - `Platform.exit()` can be used to exit the JavaFX Application at any time. When this method is called **all** `Stage`s are closed and the JavaFX Application Thread terminates. Execution returns to where the Application was launched from. JavaFX `Application` class has a `close()` method that can be overridden for normal Application termination procedures. 
 - `Platform.runLater(Runnable)` can be used to run graphical methods on the JavaFX Application thread.
 
+# Resources
 ## JavaFX Resources
 ### CSS
 - [CSS Reference](https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html#typefont)
