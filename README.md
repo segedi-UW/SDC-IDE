@@ -291,7 +291,7 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 - [Default JavaFX Containers](https://www.tutorialspoint.com/javafx/javafx_layout_panes.htm) - small list of containers
 
 ### Resources
-- [Location not set (null resource)](https://edencoding.com/location-not-set/) - resource explaination
+- [Location not set (null resource)](https://edencoding.com/location-not-set/) - resource explanation
 
 
 ## Libraries
