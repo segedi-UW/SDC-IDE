@@ -271,6 +271,9 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 
 # Resources
 ## JavaFX Resources
+[Master Video](https://www.youtube.com/watch?v=t4ehYIynI34) - Everything you would need to know in 5 hours, not necessary but provided
+[Building JavaFX with Maven](https://edencoding.com/javafx-maven/)
+
 ### CSS
 - [CSS Reference](https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html#typefont)
 - [Skinning JavaFX Applications](https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm)
@@ -298,7 +301,7 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 ### Included Libraries
 JavaFX Libraries I have included in the project already:
 - [BootstrapFX](https://github.com/kordamp/bootstrapfx) - a default stylesheet that is better than the root
-- [ControlsFX](https://github.com/controlsfx/controlsfx) - library with more controls and notifications etc.
+- [ControlsFX](https://github.com/controlsfx/controlsfx) - library with more controls and notifications etc. [ControlsFX Feature Website](http://fxexperience.com/controlsfx/features/#notifications)
 
 ### Potential Libraries
 JavaFX Potential Libraries (Discuss)
