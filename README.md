@@ -1,7 +1,9 @@
 # WIP IDE for SDC project
 ## How JavaFX Works
 JavaFX uses a scene graph that paints components onto the screen. The lowest form of a visible object is the `Node` class. The `Node` class should not be extended in the vast majority of cases. To be honest I have not done it to date, but I am fairly certain it can be done.
-JavaFX uses Properties and Bindings to separate data and code - UI components will be automatically updated when the state of a variable changes provided we use this API. It is necessary that we do a great job working with this if we want an easy to manage system - I will create a tutorial on this shortly (as of 10/11/2021 no tutorial). There are plenty of online tutorials as well etc.
+JavaFX uses Properties and Bindings to separate data and code - UI components will be automatically updated when the state of a variable changes provided we use this API. It is necessary that we do a great job working with this if we want an easy to manage system - I will create a tutorial on this shortly (as of 10/11/2021 no tutorial). There are plenty of online tutorials as well.
+
+JavaFX starts a JavaFX Application Thread after calling one of a few `launch()` methods from a subclass of `Application`. After initialization JavaFX calls that subclasses overridden `start(Stage)` method, providing the primary Stage for the application. The `Scene` can be created either in plain java or in FXML using the `FXMLLoader` class - which we will be taking advantage of. JavaFX `Node`s can be styled using style sheets with special JavaFX CSS grammer which we will also use.
 
 ## Our Application
 So with how it is currently setup on our configuration, our application starts in the App class. This class extends Application, and later on we may launch externally from a different class but for now it includes a main method that launches JavaFX. Any JavaFX application must be lanched before most of the JavaFX Objects can be used (visible graphics etc.). In the basic App class we have the following:
@@ -46,10 +48,13 @@ Now I want to look at the FXML file. In our Application it is under our module r
 </VBox>
 ~~~
 As you can see FXML is XML based and follows a similar format using angle brackets for delimiters. Note that each follows the format (besides special `<?command data>`) of `<Object [properties]/>` or `<Object [properties]></Object>`. When using the `<></>` notation properties can be specifed using angled brackets as shown for the padding property above. Some properties like padding need to be specified in this way rather than the `property="data"` format in the header.
+
 The first line provides basic encoding and document type. The next lines are import statments. In FXML when we specify what FXML objects to add we need to import them. Note that these imports include our own custom classes (more on that below). _Intellij is a blessing for imports_.
+
 In this FXML file our root (outermost) Node is the `VBox`. The root Node has some special properties that we can / need to specify. The first is the **xmlns:fx**. This is necessary if we plan on utilizing _injection_ to populate our Controller class with `fx:id` named objects (discussed later).
-**Note that `fx:id` is different than `id`! `id` is used with css to define a particular nodes style**
+**Note that `fx:id` is different than `id`! `id` is used with CSS to define a particular nodes style**.
 Additionally the controller is specified with the `fx:controller` property (which as you see requires the `xmlns:fx`). This is optional for use with controllers, but when we define it in the FXML file, a controller class is instantiated automatically by JavaFX. If we leave this line out, we need to set the controller of the `FXMLLoader` before calling `load()`. Note that this is a nice way of getting dynamic controller classes or if we need a controller class without a default constructor. In that case we would simply instantiate the controller manually, call `FXMLLoader`'s `setController(Object)` passing our controller and then call `load()` as usual.
+
 #### Default Property
 In FXML each class has a default property that when no property is specified is modified by the `FXMLLoader`. This default property is very commonly used for container objects such as `VBox` in the example above. In the example I included this default property for the sake of explaination, but the more typical way to write the above FXML knowing that most container objects default property is the children property is as follows:
 ```
@@ -92,18 +97,20 @@ There are three things to cover here:
 3. Instantiation Path
 
 #### Function calls
-For function calls, as seen in the 'onAction' property being set in our FXML file, we reference our controller's methods using the format `"#methodName"`. Note that in our controller class this method should be annotated with the `FXML` annotation as seen above. Our function calls can either take no arguments, or take a JavaFX `ActionEvent` parameter that is filled by the `FXMLLoader` automatically when the method is called.
+For function calls, as seen in the 'onAction' property being set in our FXML file, we reference our controller's methods using the format `"#methodName"`. Note that in our controller class this method should be annotated with the `@FXML` as seen above. Our function calls can either take no arguments, or take a JavaFX `ActionEvent` parameter that is filled by the `FXMLLoader` automatically when the method is called.
+
 ##### Injection
-For injection, we provide the `fx:id` property with a **unique** name. Note that the object needs to be named exactly the same in the controller class, again as seen above. 
+For injection, we provide the `fx:id` property with a **unique** name prefaced with `@FXML`. Note that the object needs to be named exactly the same in the controller class, again as seen above. 
 You will notice that the nice thing about injection is that we can have our fields be private and our methods private as well! This is very nice for seperation / abstraction.
+
 ##### Instantiation Path
 When our controller class is called by `FXMLLoader`, the first thing that happens is the default constructor is called to create the object. At this point all of our fields such as `Label welcomeText` will be null! Luckily there is a no argument method that `FXMLLoader` checks for called `initialize()` that it automatically calls if it exists after the injection process. As you can see it also is annotated with `FXML`. Having this method is not a requirement of a controller class, but in most cases will be necessary. At this point we can work with the injected fields which we likely will want to do some setup with.
 
 See the below FXML resources for more information.
 
-### Tying it Together with CSS...
+### CSS
 We have talked about the basics of everything except JavaFX CSS. Our code from earlier is only going to get a bit more involved.
-The new `App` class...
+I have made a few modifications to the `App` class as seen here:
 ```
 public class App extends Application {
     @Override
@@ -131,7 +138,9 @@ public class App extends Application {
     }
 }
 ```
-All I have done is added some checks for Null values for resources - these should be fatal errors here since if we cannot load the UI there is not much for the user to do. We should never have a case where a NPE is acceptable. _Catching NPE is considered bad code practice_. I also added a static method for getting the FXMLLoader (conveinent), and a method for adding the stylesheet. Each `Node` that has its own `Scene` needs to have this stylesheet added, which includes JavaFX objects like the `Alert` class and `Dialog` class, which is why this method is useful. The general strategy for designing these types of classes will be to create a subclass that extends one of these and then sets up all of the methods inside (see Alert and Dialog section), loading the content with the `FXMLLoader`. Of course if it is a very basic class then the `FXMLLoader` is not necessary. I digress. 
+All I have done is added some checks for null resources - these should be fatal errors here since if we cannot load the UI there is not much for the user to do. We should never have a case where a NPE is acceptable. _Catching NPE is considered bad code practice_. 
+
+I also added a static method for getting the FXMLLoader (conveinent), and a method for adding the stylesheet. Each `Node` that has a newly created `Scene` needs to have this stylesheet added, which includes JavaFX objects like the `Alert` class and `Dialog` class, which is why this method is useful. The general strategy for designing these types of classes will be to create a subclass that extends one of these and then sets up all of the methods inside (see Alert and Dialog section), loading the content with the `FXMLLoader`. Of course if it is a very basic class then the `FXMLLoader` is not necessary. I digress. 
 The only actual new thing here is the `addDefaultStylesheet(Scene)` method.
 
 Lets take a look at one line from our FXML file...
@@ -179,6 +188,7 @@ public class ExitAlert extends Alert {
   public ExitAlert() {
     super(AlertType.CONFIRMATION);
     // design code
+    App.addDefaultStylesheet(getDialogPane().getScene()); // check method path
     setHeaderText("Exit And Save?");
     setContentText("Click \"OK\" to exit and save your workspace.");
     setTitle("Exit And Save");
@@ -195,7 +205,7 @@ For dialogs it would be something similar but it is a bit more involved since yo
     
     public FormDialog() {
       super();
-      // see Alert for similar API calls
+      // see Alert for similar design API calls
       setResultConverter(this::formResult); // lookup method lambdas if this confuses you. Alternatively use (button -> {/*no method just do conversion here*/}); 
                                         // or (button -> formResult(button)); LOVE Lambdas, they are the best thing since sliced bread.
       // could use FXMLLoader here as so...
