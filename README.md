@@ -1,4 +1,8 @@
 # WIP IDE for SDC project
+
+## Intro to Maven
+We are using Maven to build our projects since it saves us the hassle of manually downloading all the dependencies and we can update dependencies very easily later on by just changing one file - the pom.xml file. In Maven, this is the build options file that manages our dependencies and takes care of any other tasks we give it. If you have questions on how it works feel free to ask me, but there is not a huge point in me creating an in depth tutorial on the ins and outs of Maven for our project currently.
+
 ## How JavaFX Works
 JavaFX uses a scene graph that paints components onto the screen. The lowest form of a visible object is the `Node` class. The `Node` class should not be extended in the vast majority of cases. To be honest I have not done it to date, but I am fairly certain it can be done.
 JavaFX uses Properties and Bindings to separate data and code - UI components will be automatically updated when the state of a variable changes provided we use this API. It is necessary that we do a great job working with this if we want an easy to manage system - I will create a tutorial on this shortly (as of 10/11/2021 no tutorial). There are plenty of online tutorials as well.
