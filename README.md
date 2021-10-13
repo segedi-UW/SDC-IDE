@@ -185,7 +185,7 @@ Not every Node type supports all JavaFX CSS properties - see the official JavaFX
 - If you want to know more about subclassing and specifics such as `.overiddenClass .subclass {//content}` you should see the reference as well.
 
 ### Alert and Dialog
-The JavaFX `Alert` and `Dialog` class have there own scenes and stage, and as the name suggests act as modal pop ups that require the user to complete before returning. The best practice for clean code is to create a subclass to design. For example, consider the case you want to create an dialog that prompts the user to save their workspace before exiting the application...
+The JavaFX `Alert` and `Dialog` class have there own scenes and stage, and as the name suggests act as modal pop ups that require the user to complete before returning. The best practice for clean code is to create a subclass to design. For example, consider the case you want to create a dialog that prompts the user to save their workspace before exiting the application...
 ```
 public class ExitAlert extends Alert {
 
@@ -227,7 +227,7 @@ For dialogs it would be something similar but it is a bit more involved since yo
   }
 ```
 Of course I am being very brief here - I just want to expose you to this a bit to give you a direction.
-The API for Dialog is that if you subclass it you **must** set the `ResultConverter`. Failure to do so will result in a not only nearly useless dialog but also non functional one. See the JavaFX documentation on `Dialog` for more information and specifics. Note that in this above code we set the controller. The reason we must set the controller and must not specify it in the fxml file is because if we do that then the FXML file will create an _instance of the FormDialog that is separate from this one_. Then the result converter will not match up with the correct object, and in fact we would observe a NPE since the injected fields would never be set in the FormDialog class that we call.
+The Dialog API **requires you to set the `ResultConverter` if you subclass it and do not use ButtonType as the generic**. Failure to do so will result in a not only nearly useless dialog (why not just make use the `Alert` in other cases?) but also non functional one. See the JavaFX documentation on `Dialog` for more information and specifics. Note that in this above code we set the controller. The reason we must set the controller and must not specify it in the fxml file is because if we do that then the FXML file will create an _instance of the FormDialog that is separate from this one_. Then the result converter will not match up with the correct object, and in fact we would observe a NPE since the injected fields would never be set in the FormDialog class that we call.
 
 Now that we have implemented these subclasses, we can use them in our program as follows:
 ```
