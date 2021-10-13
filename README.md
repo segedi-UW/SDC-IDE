@@ -264,6 +264,7 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 ## JavaFX Gotchas
 - JavaFX is not thread safe - see concurrent reference for how to use concurrency.
 - All graphical methods (`show()`, `showAndWait()`, etc.) must be done on the _JavaFX Application thread_. If a different thread is being used, then `Platform.runLater(Runnable)` can be used.
+- The FXML property `fx:id` is different than the `id` property - `fx:id` is used to inject into controllers, and `id` is used for CSS styling of unique `Node`s.
 
 ## JavaFX Platform Util
 - `Platform.exit()` can be used to exit the JavaFX Application at any time. When this method is called **all** `Stage`s are closed and the JavaFX Application Thread terminates. Execution returns to where the Application was launched from. JavaFX `Application` class has a `close()` method that can be overridden for normal Application termination procedures. 
