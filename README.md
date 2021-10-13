@@ -312,8 +312,8 @@ JavaFX Potential Libraries (Discuss)
 - [General Libraries](https://www.jrebel.com/blog/best-javafx-libraries) - list of JavaFX libraries we may want to check out (I pulled some for this list)
 
 ## Git Resources
-- [Git Branches](https://uoftcoders.github.io/studyGroup/lessons/git/branches/lesson/)
-- [Git Branches Tutorial](https://www.freecodecamp.org/news/git-for-professionals/)
+- [Git Mastery Tutorial](https://www.freecodecamp.org/news/git-for-professionals/)
+- [Git Branches Tips](https://uoftcoders.github.io/studyGroup/lessons/git/branches/lesson/)
 
 ## Misc Resources
 May be useful for later on, may not
