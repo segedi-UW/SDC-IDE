@@ -311,6 +311,9 @@ JavaFX Potential Libraries (Discuss)
 - [FormsFX](https://github.com/dlsc-software-consulting-gmbh/FormsFX) - a library for creating forms (thinking we may want this for preferences/ options
 - [General Libraries](https://www.jrebel.com/blog/best-javafx-libraries) - list of JavaFX libraries we may want to check out (I pulled some for this list)
 
+## Git Resources
+- [Git Branches](https://uoftcoders.github.io/studyGroup/lessons/git/branches/lesson/)
+- [Git Branches Tutorial](https://www.freecodecamp.org/news/git-for-professionals/)
 
 ## Misc Resources
 May be useful for later on, may not
