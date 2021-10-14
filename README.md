@@ -305,10 +305,9 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 JavaFX Libraries I have included in the project already:
 - [BootstrapFX](https://github.com/kordamp/bootstrapfx) - a default stylesheet that is better than the root
 - [ControlsFX](https://github.com/controlsfx/controlsfx) - library with more controls and notifications etc. [ControlsFX Feature Website](http://fxexperience.com/controlsfx/features/#notifications)
-
+- [RichTextFX](https://github.com/FXMisc/RichTextFX) - library that looks like it is built for creating IDE level text editors [(RicthTextFX wiki)](https://github.com/FXMisc/RichTextFX/wiki)
 ### Potential Libraries
 JavaFX Potential Libraries (Discuss)
-- [RichTextFX](https://github.com/FXMisc/RichTextFX) - library that looks like it is built for creating IDE level text editors
 - [ValidatorFX](https://github.com/effad/ValidatorFX) - library for requiring input on text fields etc.
 - [FormsFX](https://github.com/dlsc-software-consulting-gmbh/FormsFX) - a library for creating forms (thinking we may want this for preferences/ options
 - [General Libraries](https://www.jrebel.com/blog/best-javafx-libraries) - list of JavaFX libraries we may want to check out (I pulled some for this list)
