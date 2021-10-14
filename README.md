@@ -274,6 +274,8 @@ The code `dialog.showAndWait()` shows the dialog and does not progress the Appli
 ## JavaFX Resources
 - [Master Video](https://www.youtube.com/watch?v=t4ehYIynI34) - Everything you would need to know in 5 hours, not necessary but provided
 - [Building JavaFX with Maven](https://edencoding.com/javafx-maven/)
+- [JavaFX Objects w/ Tutorials](http://tutorials.jenkov.com/javafx/index.html))
+- [JavaFX Documentation](https://openjfx.io/javadoc/11/)
 
 ### CSS
 - [CSS Reference](https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html#typefont)
