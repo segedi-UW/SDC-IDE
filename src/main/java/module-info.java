@@ -4,6 +4,7 @@ module com.sdc.tthree.sdcide {
 
     requires org.controlsfx.controls;
     requires org.kordamp.bootstrapfx.core;
+    requires org.fxmisc.richtext;
 
     opens com.sdc.tthree.sdcide to javafx.fxml;
     exports com.sdc.tthree.sdcide;

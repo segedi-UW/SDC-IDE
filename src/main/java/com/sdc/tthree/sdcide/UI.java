@@ -1,4 +1,4 @@
 package com.sdc.tthree.sdcide;
 
-public interface UI {
+public abstract class UI {
 }
