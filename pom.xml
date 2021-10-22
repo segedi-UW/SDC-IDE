@@ -87,7 +87,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.sdc.t3.sdcide/com.sdc.tthree.sdcide.App</mainClass>
+                            <mainClass>com.sdc.t3.sdcide/com.sdc.three.ide.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>

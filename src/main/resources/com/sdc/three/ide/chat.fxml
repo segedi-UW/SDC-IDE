@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml">
+    <TextArea fx:id="chat" wrapText="true" editable="false"/>
+    <HBox id="sendBar">
+        <TextField fx:id="input" promptText="Type a message" HBox.hgrow="SOMETIMES"/>
+        <Button onAction="#sendChat" text="Send" id="sendBtn" HBox.hgrow="ALWAYS" maxHeight="Infinity"/>
+    </HBox>
+    <Button text="Home" onAction="#switchToHome"/>
+</VBox>

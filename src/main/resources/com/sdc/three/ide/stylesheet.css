@@ -11,6 +11,10 @@
     -fx-text-fill: red;
 }
 
+#sendBtn {
+    -fx-font-size: 10pt;
+}
+
 .exampleClass {
     -fx-underline: true;
 }

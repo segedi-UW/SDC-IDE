@@ -1,4 +1,4 @@
-package com.sdc.tthree.sdcide;
+package com.sdc.three.ide;
 
 import javafx.beans.property.ReadOnlyIntegerProperty;
 
