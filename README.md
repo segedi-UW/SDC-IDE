@@ -100,14 +100,12 @@ properties that we can / need to specify. The first is the **xmlns:fx**. This is
 if we plan on utilizing _injection_ to populate our Controller class with `fx:id` named objects
 (discussed later).
 **Note that `fx:id` is different from `id`! `id` is used with CSS to define a particular nodes
-style**. Additionally, the controller is specified with the `fx:controller` property (which as
+style**. 
+
+Additionally, the controller is specified with the `fx:controller` property (which as
 you see requires the `xmlns:fx`). This is optional for use with controllers, but when we define
-it in the FXML file, a controller class is instantiated automatically by JavaFX. If we leave
-this line out, we need to set the controller of the `FXMLLoader` before calling `load()`. Note
-that this is a nice way of getting dynamic controller classes or if we need a controller class
-without a default constructor. In that case we would simply instantiate the controller manually,
-call `FXMLLoader`'s `setController(Object)` passing our controller and then call `load()` as usual.
-An example of dynamic FXML loading is shown later on in the Dialog section.
+it in the FXML file, an unreferenced controller class is instantiated automatically by JavaFX. If we leave
+this line out, we need to set the controller of the `FXMLLoader` before calling `load()`. 
 
 #### Default Property
 In FXML each class has a default property that when no property is specified is modified by the
@@ -155,9 +153,10 @@ public class Chat extends VBox {
     /* other methods dealing with fields */
 }
 ```
-So now we can use `Chat` in an FXML file as an object, and this is
+So now we can use `Chat` in an FXML file as an object (after importing it), and this is
 what would be created. Our `Chat` object would share all properties of a
-`VBox`, but we would not need to add the fields to it in the fxml file.
+`VBox`, but we would not need to add the fields to it in the fxml file since that is
+handled in the constructor.
 
 Another way of achieving this that is nice for elaborate subclasses 
 is given after the following introduction to Controllers.
@@ -217,8 +216,8 @@ implementing that interface for all visible objects. Everytime you want to add t
 scene graph you need to call `object.getDisplay()` instead of just passing the object as the
 parameter.
 
-A second reason is that we can call our subclasses within FXML files, importing
-them like other JavaFX objects. So we could separate a FXML file into sub
+A second reason is that we can call our subclasses within FXML files as previously mentioned,
+importing them like other JavaFX objects. This allows us to separate a FXML file into sub
 FXML files for specific sections if the file gets very large etc.
 
 Here is an example of how this would be done using FXML:
@@ -233,7 +232,7 @@ chat.fxml
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.HBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.sdc.three.ide.Chat">
     <TextArea fx:id="chat" wrapText="true" editable="false"/>
     <HBox id="sendBar">
         <TextField fx:id="input" promptText="Type a message" HBox.hgrow="SOMETIMES"/>
@@ -242,12 +241,6 @@ chat.fxml
     <Button text="Home" onAction="#switchToHome"/>
 </VBox>
 ```
-As you can see we did not include a `fx:controller` field in this FXML
-file, since we will be taking that into our own hands. This allows us
-to load the FXML from inside the `Chat` constructor. If we were to do this
-the standard way we would need to use `FXMLLoader`'s `load()` method, and
-then get the controller from it. If we wanted multiple instances of `Chat`
-this would become a pain.
 
 Chat.java
 ```
@@ -264,13 +257,13 @@ public class Chat extends StackPane {  <----- see above
         super();
         try {
             FXMLLoader loader = App.fxmlLoader("chat.fxml");
-            loader.setController(this);
+            loader.setControllerFactory(callback -> this); // IMPORTANT LINE
             getChildren().add(loader.load());
         } catch (IOException e) {
             throw new IllegalStateException("Could not load chat.fxml: " + e.getMessage());
         }
     }
-
+    
     @FXML
     private void sendChat() {
         /* send the message */
@@ -287,6 +280,10 @@ public class Chat extends StackPane {  <----- see above
     }
 }
 ```
+If we did not specify the controller factory in this object, the
+`FXMLLoader` would create a _new instance of Chat_ rather than using
+the created one. Our calls to our object would be useless. This is 
+described in more depth later on as well.
 
 A Scene including this object would be created like so:
 ```
@@ -525,7 +522,7 @@ likely to return something. In that case it may look like the following:
                                         
       FXMLLoader loader = App.fxmlLoader("formDialog.fxml"); 
       // set this object as controller so that resultConverter can utilize controller injected fields etc.
-      loader.setController(this); 
+      loader.setControllerFactory(callback -> this);
       getDialogPane().setContent(loader.load());
     }
     
@@ -540,12 +537,11 @@ likely to return something. In that case it may look like the following:
 Of course, I am being very brief here - I just want to expose you to this a bit to give you a 
 direction.
 
-Note that in above code we manually set the controller. The reason we must set 
-the controller and cannot specify it in the fxml file is because if we do that 
-then the FXML file will create an _instance of the FormDialog that is separate 
-from the one we use_. The result converter will not match up with the correct 
-object, and in fact in that case we would observe a NPE since the
-injected fields would never be set in the FormDialog class that we call.
+Note that in above code we manually set the controller factory. The reason we must set 
+the controller factory is otherwise the `FXMLLoader` will create an _instance of the 
+`FormDialog` that is separate from the one we use_. The result converter 
+will not match up with the correct object, and in fact in that case we would observe a 
+NPE since the injected fields would never be set in the FormDialog class that we call.
 
 #### Other Notes on Dialog's
 

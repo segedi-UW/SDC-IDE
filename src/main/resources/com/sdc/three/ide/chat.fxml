@@ -6,11 +6,11 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.HBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.sdc.three.ide.Chat">
     <TextArea fx:id="chat" wrapText="true" editable="false"/>
     <HBox id="sendBar">
         <TextField fx:id="input" promptText="Type a message" HBox.hgrow="SOMETIMES"/>
         <Button onAction="#sendChat" text="Send" id="sendBtn" HBox.hgrow="ALWAYS" maxHeight="Infinity"/>
     </HBox>
-    <Button text="Home" onAction="#switchToHome"/>
+        <Button text="Home" onAction="#switchToHome"/>
 </VBox>

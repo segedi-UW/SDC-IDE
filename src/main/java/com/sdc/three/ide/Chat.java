@@ -2,7 +2,6 @@ package com.sdc.three.ide;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -29,7 +28,7 @@ public class Chat extends StackPane {
         super();
         try {
             FXMLLoader loader = App.fxmlLoader("chat.fxml");
-            loader.setController(this);
+            loader.setControllerFactory(callback -> this);
             getChildren().add(loader.load());
         } catch (IOException e) {
             throw new IllegalStateException("Could not load chat.fxml: " + e.getMessage());
@@ -51,5 +50,8 @@ public class Chat extends StackPane {
         App.setScene(home);
     }
 
+    public TextArea getChat() {
+        return chat;
+    }
     /* other methods that you want */
 }
