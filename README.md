@@ -256,7 +256,7 @@ public class Chat extends StackPane {  <----- see above
     public Chat() {
         super();
         try {
-            FXMLLoader loader = App.fxmlLoader("chat.fxml");
+            FXMLLoader loader = App.toLoader("chat.fxml");
             loader.setControllerFactory(callback -> this); // IMPORTANT LINE
             getChildren().add(loader.load());
         } catch (IOException e) {
@@ -273,7 +273,7 @@ public class Chat extends StackPane {  <----- see above
 
     @FXML
     public void switchToHome() throws IOException {
-        FXMLLoader loader = App.fxmlLoader("controller.fxml");
+        FXMLLoader loader = App.toLoader("controller.fxml");
         Scene home = new Scene(loader.load(), 320, 240);
         App.addDefaultStylesheets(home);
         App.setScene(home);
@@ -321,7 +321,7 @@ public class App extends Application {
      * @throws NullPointerException if resource does not exist
      */
     public static FXMLLoader fxmlLoader(String resource) {
-        return new FXMLLoader(resourceURL(resource));
+        return new FXMLLoader(toResourceURL(resource));
     }
 
     /**
@@ -332,7 +332,7 @@ public class App extends Application {
      * @throws NullPointerException if stylesheet.css is not on the resource path
      */
     public static void addDefaultStylesheets(Scene scene) {
-        String custom = resourceURL("stylesheet.css").toExternalForm();
+        String custom = toResourceURL("stylesheet.css").toExternalForm();
         scene.getStylesheets().addAll(BootstrapFX.bootstrapFXStylesheet(), custom);
         // our custom sheet has the highest precedence when added last
     }
@@ -343,7 +343,7 @@ public class App extends Application {
      * @return non-null URL
      * @throws NullPointerException if resource does not exist
      */
-    public static URL resourceURL(String resource) {
+    public static URL toResourceURL(String resource) {
         URL url = App.class.getResource(resource);
         if (url == null) throw new NullPointerException(String.format("Resource \"%s\" was not found", resource));
         return url;
@@ -520,7 +520,7 @@ likely to return something. In that case it may look like the following:
       // set various text and add default stylesheets!
       setResultConverter(this::formResult); 
                                         
-      FXMLLoader loader = App.fxmlLoader("formDialog.fxml"); 
+      FXMLLoader loader = App.toLoader("formDialog.fxml"); 
       // set this object as controller so that resultConverter can utilize controller injected fields etc.
       loader.setControllerFactory(callback -> this);
       getDialogPane().setContent(loader.load());

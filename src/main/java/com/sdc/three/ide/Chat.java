@@ -27,7 +27,7 @@ public class Chat extends StackPane {
     public Chat() {
         super();
         try {
-            FXMLLoader loader = App.fxmlLoader("chat.fxml");
+            FXMLLoader loader = App.toLoader("chat.fxml");
             loader.setControllerFactory(callback -> this);
             getChildren().add(loader.load());
         } catch (IOException e) {
@@ -44,7 +44,7 @@ public class Chat extends StackPane {
 
     @FXML
     public void switchToHome() throws IOException {
-        FXMLLoader loader = App.fxmlLoader("controller.fxml");
+        FXMLLoader loader = App.toLoader("controller.fxml");
         Scene home = new Scene(loader.load(), 320, 240);
         App.addDefaultStylesheets(home);
         App.setScene(home);

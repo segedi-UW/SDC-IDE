@@ -16,7 +16,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         mainStage = stage;
-        FXMLLoader fxmlLoader = fxmlLoader("controller.fxml");
+        FXMLLoader fxmlLoader = toLoader("controller.fxml");
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         addDefaultStylesheets(scene);
         stage.setTitle("This is the title!");
@@ -35,8 +35,8 @@ public class App extends Application {
      * @return a FXMLLoader with a non-null FXML sheet
      * @throws NullPointerException if resource does not exist
      */
-    public static FXMLLoader fxmlLoader(String resource) {
-        return new FXMLLoader(resourceURL(resource));
+    public static FXMLLoader toLoader(String resource) {
+        return new FXMLLoader(toResourceURL(resource));
     }
 
     /**
@@ -47,7 +47,7 @@ public class App extends Application {
      * @throws NullPointerException if stylesheet.css is not on the resource path
      */
     public static void addDefaultStylesheets(Scene scene) {
-        String custom = resourceURL("stylesheet.css").toExternalForm();
+        String custom = toResourceURL("stylesheet.css").toExternalForm();
         scene.getStylesheets().addAll(BootstrapFX.bootstrapFXStylesheet(), custom);
         // our custom sheet has the highest precedence when added last
     }
@@ -58,7 +58,7 @@ public class App extends Application {
      * @return non-null URL
      * @throws NullPointerException if resource does not exist
      */
-    public static URL resourceURL(String resource) {
+    public static URL toResourceURL(String resource) {
         URL url = App.class.getResource(resource);
         if (url == null) throw new NullPointerException(String.format("Resource \"%s\" was not found", resource));
         return url;
