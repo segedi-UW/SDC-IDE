@@ -1,4 +1,4 @@
 package com.sdc.three.ide;
 
-public abstract class UI {
+public class UI {
 }
