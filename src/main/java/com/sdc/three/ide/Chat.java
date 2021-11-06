@@ -44,7 +44,7 @@ public class Chat extends StackPane {
 
     @FXML
     public void switchToHome() throws IOException {
-        FXMLLoader loader = App.toLoader("controller.fxml");
+        FXMLLoader loader = App.toLoader("ui.fxml");
         Scene home = new Scene(loader.load(), 320, 240);
         App.addDefaultStylesheets(home);
         App.setScene(home);
