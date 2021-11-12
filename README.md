@@ -31,8 +31,9 @@ So with how our project is currently configured, our application starts in the `
 `App` extends `Application`, for now it includes `main` which launches JavaFX. Any 
 JavaFX application must be launched before most of the JavaFX Objects can be used 
 (visible graphics etc.). Our primitive `App` contains the following:
-```
+```java
 public class App extends Application {
+    
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("hello-view.fxml"));
@@ -113,7 +114,7 @@ In FXML each class has a default property that when no property is specified is 
 in the example above. In the example I included this default property for the sake of explanation,
 but the more typical way to write the above FXML knowing that most container objects default property
 is the children property is as follows:
-```
+```fxml
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"   <----- Root node
       fx:controller="com.sdc.three.ide.Controller">
     <padding>
@@ -134,7 +135,7 @@ internally incorporates multiple other `Control` objects - such as subclassing a
 then adding a `TextArea` and `Button` to it in its default constructor etc.
 
 For example:
-```
+```java
 public class Chat extends VBox {
 
     private TextArea chat;
@@ -165,7 +166,7 @@ is given after the following introduction to Controllers.
 JavaFX's objects have all sorts of properties which I will create a tutorial for later.
 These properties can be initialized using FXML as seen in the example code above, of which I want
 to cover two things. To start, lets look at our last beginning class, the `Controller` class.
-```
+```java
 public class Controller {
     @FXML
     private Label welcomeText;
@@ -223,7 +224,7 @@ FXML files for specific sections if the file gets very large etc.
 Here is an example of how this would be done using FXML:
 
 chat.fxml
-```
+```fxml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.TextField?>
@@ -243,13 +244,13 @@ chat.fxml
 ```
 
 Chat.java
-```
+```java
 /*
  * A StackPane is simply a JavaFX container that lays children in
- * the center and overlayed. In this case there is only the one
+ * the center and overlaid. In this case there is only the one
  * child which is a container itself - the VBox defined in chat.fxml
  */
-public class Chat extends StackPane {  <----- see above
+public class Chat extends StackPane {  // <----- see above
     @FXML private TextArea chat;
     @FXML private TextField input;
 
@@ -286,7 +287,9 @@ the created one. Our calls to our object would be useless. This is
 described in more depth later on as well.
 
 A Scene including this object would be created like so:
-```
+```java
+public class SomeClass {
+    
     @FXML
     public void switchToChat(ActionEvent actionEvent) throws IOException {
         // ActionEvent is not used, simply included as an example
@@ -298,6 +301,8 @@ A Scene including this object would be created like so:
         App.addDefaultStylesheets(chat);
         App.setScene(chat);
     }
+
+}
 ```
 
 Keep in mind that what the `FXMLLoader` returns with `load()` is the root `Node` in the
@@ -307,7 +312,7 @@ also just add it as a child to one or any other use case for a `VBox`.
 ### CSS
 We have talked about the basics of everything except JavaFX CSS. Our code from earlier is only going to get a bit more
 involved. I have made a few modifications to the `App` class as seen here:
-```
+```java
 public class App extends Application {
     public static void setScene(Scene scene) {
         if (mainStage == null) throw new NullPointerException("Attempted to set scene of mainStage before initialization");
@@ -351,15 +356,15 @@ public class App extends Application {
 }
 ```
 All I have done is added some checks for null resources - these should be fatal errors here since if
-we cannot load the UI there is not much for the user to do. We should never have a case where a 
+we cannot load the UI there is not much for the user to do. We should never have a case where a
 NPE is acceptable. _Catching NPE is considered bad code practice_.
 
-I also added a static method for getting the FXMLLoader (convenient), and a method for adding the 
-stylesheet. Each `Node` that has a newly created `Scene` needs to have this stylesheet added, 
-which includes JavaFX objects like the `Alert` class and `Dialog` class, which is why this method 
-is useful. The general strategy for designing these types of classes will be to create a subclass 
-that extends one of these and then sets up all the methods inside (see Alert and Dialog section), 
-loading the content with the `FXMLLoader`. Of course if it is a very basic class then the 
+I also added a static method for getting the FXMLLoader (convenient), and a method for adding the
+stylesheet. Each `Node` that has a newly created `Scene` needs to have this stylesheet added,
+which includes JavaFX objects like the `Alert` class and `Dialog` class, which is why this method
+is useful. The general strategy for designing these types of classes will be to create a subclass
+that extends one of these and then sets up all the methods inside (see Alert and Dialog section),
+loading the content with the `FXMLLoader`. Of course if it is a very basic class then the
 `FXMLLoader` is not necessary. I digress.
 The only actual new thing here is the `addDefaultStylesheets(Scene)` method. Everything has just
 been rewritten as functions.
@@ -368,24 +373,24 @@ Take a look at one line from our FXML file...
 
 `<Label fx:id="welcomeText" id="textExample" styleClass="exampleClass"/>`
 
-As you can see this Label has the `fx:id`, `id`, and `styleClass` properties set. In JavaFX `Node` 
-objects `id` and `styleClass` property corresponds to the CSS styles that a particular object has. 
-Note that each `Node` has a `setStyle(String)` method that allows inline styles directly in code. 
-Additionally, this can be done in FXML with the `style` property. However, it is best-practice to 
+As you can see this Label has the `fx:id`, `id`, and `styleClass` properties set. In JavaFX `Node`
+objects `id` and `styleClass` property corresponds to the CSS styles that a particular object has.
+Note that each `Node` has a `setStyle(String)` method that allows inline styles directly in code.
+Additionally, this can be done in FXML with the `style` property. However, it is best-practice to
 separate CSS from our code base which is why we are using this external stylesheet approach.
-JavaFX CSS cascades from the stylesheets added to a `Node`'s stylesheet `ObservableList<String>` 
-accessible via the `getStyleClass()` method. Every `Node` starts off with the true default 
-stylesheet ("caspian.css"). Stylesheets added to this list are overridden by sheets later in the 
-list, so if we want to override caspian.css styles for a given class we just need to add the 
+JavaFX CSS cascades from the stylesheets added to a `Node`'s stylesheet `ObservableList<String>`
+accessible via the `getStyleClass()` method. Every `Node` starts off with the true default
+stylesheet ("caspian.css"). Stylesheets added to this list are overridden by sheets later in the
+list, so if we want to override caspian.css styles for a given class we just need to add the
 stylesheet (since this naturally appends the `String` to the end of the list).
 The priorities for a `Node`'s CSS is StyleClass < ID < inline style.
 In JavaFX CSS there are two selector types:
 1. Class
 2. ID
 
-The id selector is a '#' followed by the id name. The class selector is a '.' followed by the 
+The id selector is a '#' followed by the id name. The class selector is a '.' followed by the
 class name optionally followed by subclasses for specification. For example some JavaFX controls have text
-elements inside them that are not directly accessible by styling the `Control` itself in the 
+elements inside them that are not directly accessible by styling the `Control` itself in the
 stylesheet. These text elements can usually be styled by using the following syntax: `.controlName .labeled {...}`.
 All selectors are followed by brackets with CSS like normal.
 
@@ -394,7 +399,7 @@ See the JavaFX CSS reference for more details, and I recommend checking out
 for a great introduction. This tutorial is linked in the CSS section at the end as well.
 
 Here is an example CSS sheet I have filled a bit in for demonstration:
-```
+```css
 // From reference
 .root {
     -fx-font-size: 16pt;
@@ -412,45 +417,45 @@ Here is an example CSS sheet I have filled a bit in for demonstration:
     -fx-underline: true;
 }
 ```
-The **root** class is an example of a class override, since the stylesheet that JavaFX uses as 
-default has a root style class that we change here. It is the base skin for our JavaFX Application 
-that we can style to have a uniform style among all of our components. The `#textExample` is an example of an id selector, and the `.exampleClass` is an example of a class that we defined on 
+The **root** class is an example of a class override, since the stylesheet that JavaFX uses as
+default has a root style class that we change here. It is the base skin for our JavaFX Application
+that we can style to have a uniform style among all of our components. The `#textExample` is an example of an id selector, and the `.exampleClass` is an example of a class that we defined on
 our own.
 
 Note that the
 `-fx-base` property handles the base color of **all** `Control` objects when specified in
 the root like this.
 
-Just like in normal CSS, a `Node` can have many style classes, but only one id. Unlike normal 
+Just like in normal CSS, a `Node` can have many style classes, but only one id. Unlike normal
 CSS, ids are not required to be unique.
 
-Also, not every Node type supports all JavaFX CSS properties - see the official JavaFX CSS Reference 
+Also, not every Node type supports all JavaFX CSS properties - see the official JavaFX CSS Reference
 for specifics.
-- If you are interested in state CSS (hovering, selected, etc.) check out pseudo classes in 
-JavaFX CSS in the reference.
-- If you want to know more about subclassing and specifics such as `.overiddenClass .subclass 
-{...}` you should see the reference and previously linked tutorial as well.
+- If you are interested in state CSS (hovering, selected, etc.) check out pseudo classes in
+  JavaFX CSS in the reference.
+- If you want to know more about subclassing and specifics such as `.overiddenClass .subclass
+  {...}` you should see the reference and previously linked tutorial as well.
 
 ### Brief Intro to Method Lambdas
 In a moment you will see some code that utilizes Java method lambdas! They are pretty cool, but
 I don't expect you to know what they are, so I am prefacing them here.
 
-A standard lambda is a shortened version of an abstract class. 
-in java, there are two forms of lambda - the one line and the multiline form. 
+A standard lambda is a shortened version of an abstract class.
+in java, there are two forms of lambda - the one line and the multiline form.
 
-```
-public SomeClass {
+```java
+public class SomeClass {
 
-    private interface DoMath {
-        double calculate(double n1, double n2);
-    }
+private interface DoMath {
+    double calculate(double n1, double n2);
+}
 
     public void someMethod() {
         // multiline
         DoMath add = (add1, add2) -> {
             return add1 + add2;
         };
-        
+
         // one line - return is expected and is not explicit here
         add = (add1, add2) -> add1 + add2;
     }
@@ -458,89 +463,97 @@ public SomeClass {
 ```
 
 The one line version of the lambda can be expressed as this:
-```
+```java
+public class SomeClass {
+    
     public void someMethod() {
         // old one line
         add = (add1, add2) -> add1 + add2;
-        
+
         // new one line using a method instead
         add = (add1, add2) -> add(add1, add2);
     }
-    
+
     public double add(double add1, double add2) {
         return add1 + add2;
     }
+
+}
 ```
 
 This allows a usual multiline lambda to be defined in an external function! This is very cool
 and allows for cleaner code, but is more verbose than it needs to be.
 Since lambdas work to reduce this, there is a better lambda solution:
-```
+```java
+public class SomeClass {
+
     public void someMethod() {
         add = this::add;
     }
-    
+
     public double add(double add1, double add2) {
         return add1 + add2;
     }
+
+}
 ```
 The first part is the class or object that the method is a part of. The second part is the method name. The two parts are
 connected with two colons. Syntax: `<class>::<method name>`.
 
 ### Alert and Dialog
-The JavaFX `Alert` and `Dialog` class have their own scenes and stage, and as the name suggests 
-act as modal pop-ups that require the user to complete before returning. The best practice for 
-clean code is to create a subclass to design. For example, consider the case you want to create 
+The JavaFX `Alert` and `Dialog` class have their own scenes and stage, and as the name suggests
+act as modal pop-ups that require the user to complete before returning. The best practice for
+clean code is to create a subclass to design. For example, consider the case you want to create
 a dialog that prompts the user to save their workspace before exiting the application...
-```
+```java
 public class ExitAlert extends Alert {
 
-  public ExitAlert() {
-    super(AlertType.CONFIRMATION);
-    // design code
-    App.addDefaultStylesheets(getDialogPane().getScene()); // check method path
-    setHeaderText("Exit And Save?");
-    setContentText("Click \"OK\" to exit and save your workspace.");
-    setTitle("Exit And Save");
-  }
+    public ExitAlert() {
+        super(AlertType.CONFIRMATION);
+        // design code
+        App.addDefaultStylesheets(getDialogPane().getScene()); // check method path
+        setHeaderText("Exit And Save?");
+        setContentText("Click \"OK\" to exit and save your workspace.");
+        setTitle("Exit And Save");
+    }
 
 }
 ```
-For dialogs, it would be something similar, but it is a bit more involved since you are 
+For dialogs, it would be something similar, but it is a bit more involved since you are
 likely to return something. In that case it may look like the following:
-```
+```java
   public class FormDialog extends Dialog<Form> {
-  
-  @FXML private TextField name;
-  @FXML private CheckBox isMale;
-    
+
+    @FXML private TextField name;
+    @FXML private CheckBox isMale;
+
     public FormDialog() {
-      super();
-      // see above Alert for similar design API calls:  
-      // set various text and add default stylesheets!
-      setResultConverter(this::formResult); 
-                                        
-      FXMLLoader loader = App.toLoader("formDialog.fxml"); 
-      // set this object as controller so that resultConverter can utilize controller injected fields etc.
-      loader.setControllerFactory(callback -> this);
-      getDialogPane().setContent(loader.load());
+        super();
+        // see above Alert for similar design API calls:  
+        // set various text and add default stylesheets!
+        setResultConverter(this::formResult);
+
+        FXMLLoader loader = App.toLoader("formDialog.fxml");
+        // set this object as controller so that resultConverter can utilize controller injected fields etc.
+        loader.setControllerFactory(callback -> this);
+        getDialogPane().setContent(loader.load());
     }
-    
+
     private Form formResult(ButtonType button) {
-      // process code
-      if (button == ButtonType.OK)
-        return new Form(name.getText(), isMale.getSelected());
-      return null;
+        // process code
+        if (button == ButtonType.OK)
+            return new Form(name.getText(), isMale.getSelected());
+        return null;
     }
-  }
+}
 ```
-Of course, I am being very brief here - I just want to expose you to this a bit to give you a 
+Of course, I am being very brief here - I just want to expose you to this a bit to give you a
 direction.
 
-Note that in above code we manually set the controller factory. The reason we must set 
-the controller factory is otherwise the `FXMLLoader` will create an _instance of the 
-`FormDialog` that is separate from the one we use_. The result converter 
-will not match up with the correct object, and in fact in that case we would observe a 
+Note that in above code we manually set the controller factory. The reason we must set
+the controller factory is otherwise the `FXMLLoader` will create an _instance of the
+`FormDialog` that is separate from the one we use_. The result converter
+will not match up with the correct object, and in fact in that case we would observe a
 NPE since the injected fields would never be set in the FormDialog class that we call.
 
 #### Other Notes on Dialog's
@@ -548,78 +561,82 @@ NPE since the injected fields would never be set in the FormDialog class that we
 If you use `Dialog` or `Alert` classes make sure you add the default stylesheets!
 Otherwise, our Application will have discontinuous style.
 
-The Dialog API **requires the `ResultConverter` to be set when subclassing it and not 
-using ButtonType as the generic**. 
+The Dialog API **requires the `ResultConverter` to be set when subclassing it and not
+using ButtonType as the generic**.
 
-Not doing this will result in a non-functional dialog. 
-It should nearly always be the case that when using Dialog's you do this, 
+Not doing this will result in a non-functional dialog.
+It should nearly always be the case that when using Dialog's you do this,
 otherwise using the `Alert` class is likely easier.
 
-See the JavaFX documentation on `Dialog` for more information and specifics. 
+See the JavaFX documentation on `Dialog` for more information and specifics.
 
 #### Implementation
 
 Now that we have implemented these subclasses, we can use them in our program as follows:
-```
+```java
+public class SomeClass {
+    
 public someAlertMethod() {
-  ExitAlert alert = new ExitAlert();
-  alert.showAndWait(this::save);
-}
+        ExitAlert alert = new ExitAlert();
+        alert.showAndWait(this::save);
+        }
 
 private save(ButtonType button) {
-  switch (button) {
-    case ButtonType.OK:
-      // save the data
-      saveData();
-      // fall through
-    case ButtonType.NO:
-      // exit
-      Platform.exit(); // JavaFX exits the Application
-      break;
-    default: // includes ButtonType.CANCEL
-      // don't save, don't exit
-      break;
-  }
-}
+        switch (button) {
+        case ButtonType.OK:
+        // save the data
+        saveData();
+        // fall through
+        case ButtonType.NO:
+        // exit
+        Platform.exit(); // JavaFX exits the Application
+        break;
+default: // includes ButtonType.CANCEL
+        // don't save, don't exit
+        break;
+        }
+        }
 
 public someMethod() {
-  FormDialog dialog = new FormDialog();
-  dialog.showAndWait().ifPresent(this::addForm);
-}
+        FormDialog dialog = new FormDialog();
+        dialog.showAndWait().ifPresent(this::addForm);
+        }
 
 private addForm(Form form) {
-  // form will never be null
-  forms.add(form); // or whatever etc.
+        // form will never be null
+        forms.add(form); // or whatever etc.
+        }
+
 }
 ```
-The code `dialog.showAndWait()` shows the dialog and does not progress the Application until 
-we have returned from the dialog. When the user triggers the dialog to close our result 
-converter creates the form and then returns it. If the form is null, then ifPresent does not 
-run - if it is non-null, then it executes the code in addForm via the method lambda. Another 
+The code `dialog.showAndWait()` shows the dialog and does not progress the Application until
+we have returned from the dialog. When the user triggers the dialog to close our result
+converter creates the form and then returns it. If the form is null, then ifPresent does not
+run - if it is non-null, then it executes the code in addForm via the method lambda. Another
 popular form is replacing `ifPresent()` with `ifPresentOrElse()`. This will allow you
-to write code for the case it is null. If you are not a fan there 
+to write code for the case it is null. If you are not a fan there
 are alternatives to Java's Optional API, although I highly recommend you use it.
 
 ## JavaFX Gotchas
 - JavaFX is not thread safe - see concurrent reference for how to use concurrency.
-- All graphical methods (`show()`, `showAndWait()`, etc.) must be done on the _JavaFX 
-Application thread_. If a different thread is being used, then `Platform.runLater(Runnable)` 
-can be used.
-- The FXML property `fx:id` is different from the `id` property - `fx:id` is used to inject 
-into controllers, and `id` is used for CSS styling of unique `Node` objects.
+- All graphical methods (`show()`, `showAndWait()`, etc.) must be done on the _JavaFX
+  Application thread_. If a different thread is being used, then `Platform.runLater(Runnable)`
+  can be used.
+- The FXML property `fx:id` is different from the `id` property - `fx:id` is used to inject
+  into controllers, and `id` is used for CSS styling of unique `Node` objects.
 
 ## JavaFX Platform Util
-- `Platform.exit()` can be used to exit the JavaFX Application at any time. When this method 
-is called **all** `Stage`s are closed and the JavaFX Application Thread terminates. Execution 
-returns to where the Application was launched from. JavaFX `Application` class has a `close()` 
-method that can be overridden for normal Application termination procedures.
-- `Platform.runLater(Runnable)` can be used to run graphical methods on the JavaFX Application 
-thread.
+- `Platform.exit()` can be used to exit the JavaFX Application at any time. When this method
+  is called **all** `Stage`s are closed and the JavaFX Application Thread terminates. Execution
+  returns to where the Application was launched from. JavaFX `Application` class has a `close()`
+  method that can be overridden for normal Application termination procedures.
+- `Platform.runLater(Runnable)` can be used to run graphical methods on the JavaFX Application
+  thread.
 
 # Resources
 ## JavaFX Resources
-- [Master Video](https://www.youtube.com/watch?v=t4ehYIynI34) - Everything you would need to 
-know in 5 hours, not necessary (at all) but provided
+- [Master Video](https://www.youtube.com/watch?v=t4ehYIynI34) - Everything you would need to
+  know in 5 hours, not necessary (at all) but provided
 - [Building JavaFX with Maven](https://edencoding.com/javafx-maven/)
 - [JavaFX Objects w/ Tutorials](http://tutorials.jenkov.com/javafx/index.html)
 - [JavaFX Documentation](https://openjfx.io/javadoc/11/)
@@ -635,43 +652,43 @@ know in 5 hours, not necessary (at all) but provided
 - [Mastering FXML](https://docs.oracle.com/javafx/2/fxml_get_started/jfxpub-fxml_get_started.htm)
 
 ### Bindings API
-- [JavaFX Properties & Binding](https://edencoding.com/javafx-properties-and-binding-a-complete-guide/) 
-Very Important! Will add tutorial on request
+- [JavaFX Properties & Binding](https://edencoding.com/javafx-properties-and-binding-a-complete-guide/)
+  Very Important! Will add tutorial on request
 
 ### Concurrency
 - [JavaFX Concurrency](https://docs.oracle.com/javase/8/javafx/interoperability-tutorial/concurrency.htm)
 
 ### Layouts
-- [Default JavaFX Containers](https://www.tutorialspoint.com/javafx/javafx_layout_panes.htm) - 
-small list of basic containers
+- [Default JavaFX Containers](https://www.tutorialspoint.com/javafx/javafx_layout_panes.htm) -
+  small list of basic containers
 
 ### Resources
-- [Location not set (null resource)](https://edencoding.com/location-not-set/) - 
-resource explanation. Should not be a problem with how I configured our Application.
+- [Location not set (null resource)](https://edencoding.com/location-not-set/) -
+  resource explanation. Should not be a problem with how I configured our Application.
 
 
 ## Libraries
 ### Included Libraries
 JavaFX Libraries I have included in the project already:
-- [BootstrapFX](https://github.com/kordamp/bootstrapfx) - 
-a default stylesheet that is better than the root
-- [ControlsFX](https://github.com/controlsfx/controlsfx) - 
-library with more controls and notifications etc. 
-[ControlsFX Feature Website](http://fxexperience.com/controlsfx/features/#notifications)
-- [RichTextFX](https://github.com/FXMisc/RichTextFX) - 
-library that looks like it is built for creating IDE level text editors 
-[(RichTextFX wiki)](https://github.com/FXMisc/RichTextFX/wiki)
-- [TestFX](https://github.com/TestFX/TestFX) - 
-documentation is not great so here are some tutorials: 
-[google](https://www.google.com/search?q=using+TestFX+JavaFX&newwindow=1&client=firefox-b-1-d&channel=nus5&sxsrf=AOaemvLiPkFvphfGwoafDPcFph65yKmzEg%3A1634245450996&ei=SptoYZuRPNGFtQbtuLagCQ&ved=0ahUKEwib3tPc5srzAhXRQs0KHW2cDZQQ4dUDCA0&uact=5&oq=using+TestFX+JavaFX&gs_lcp=Cgdnd3Mtd2l6EAM6BwgAEEcQsANKBAhBGABQ2owsWPaPLGDOkyxoAXACeACAAXWIAb4BkgEDMS4xmAEAoAEByAEIwAEB&sclient=gws-wiz), [TDD with TestFX](https://medium.com/information-and-technology/test-driven-development-in-javafx-with-testfx-66a84cd561e0), [YouTube Video Tutorial](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjziZK26crzAhXKQs0KHbqeAPsQFnoECAYQAw&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DNG03nNpSmgU&usg=AOvVaw0RdZS4D0AFJN-fwDEO3thx)
+- [BootstrapFX](https://github.com/kordamp/bootstrapfx) -
+  a default stylesheet that is better than the root
+- [ControlsFX](https://github.com/controlsfx/controlsfx) -
+  library with more controls and notifications etc.
+  [ControlsFX Feature Website](http://fxexperience.com/controlsfx/features/#notifications)
+- [RichTextFX](https://github.com/FXMisc/RichTextFX) -
+  library that looks like it is built for creating IDE level text editors
+  [(RichTextFX wiki)](https://github.com/FXMisc/RichTextFX/wiki)
+- [TestFX](https://github.com/TestFX/TestFX) -
+  documentation is not great so here are some tutorials:
+  [google](https://www.google.com/search?q=using+TestFX+JavaFX&newwindow=1&client=firefox-b-1-d&channel=nus5&sxsrf=AOaemvLiPkFvphfGwoafDPcFph65yKmzEg%3A1634245450996&ei=SptoYZuRPNGFtQbtuLagCQ&ved=0ahUKEwib3tPc5srzAhXRQs0KHW2cDZQQ4dUDCA0&uact=5&oq=using+TestFX+JavaFX&gs_lcp=Cgdnd3Mtd2l6EAM6BwgAEEcQsANKBAhBGABQ2owsWPaPLGDOkyxoAXACeACAAXWIAb4BkgEDMS4xmAEAoAEByAEIwAEB&sclient=gws-wiz), [TDD with TestFX](https://medium.com/information-and-technology/test-driven-development-in-javafx-with-testfx-66a84cd561e0), [YouTube Video Tutorial](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjziZK26crzAhXKQs0KHbqeAPsQFnoECAYQAw&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DNG03nNpSmgU&usg=AOvVaw0RdZS4D0AFJN-fwDEO3thx)
 ### Potential Libraries
 JavaFX Potential Libraries (Discuss)
-- [ValidatorFX](https://github.com/effad/ValidatorFX) - 
-library for requiring input on text fields etc.
-- [FormsFX](https://github.com/dlsc-software-consulting-gmbh/FormsFX) - 
-a library for creating forms (thinking we may want this for preferences/ options
-- [General Libraries](https://www.jrebel.com/blog/best-javafx-libraries) - 
-list of JavaFX libraries we may want to check out (I pulled some for this list)
+- [ValidatorFX](https://github.com/effad/ValidatorFX) -
+  library for requiring input on text fields etc.
+- [FormsFX](https://github.com/dlsc-software-consulting-gmbh/FormsFX) -
+  a library for creating forms (thinking we may want this for preferences/ options
+- [General Libraries](https://www.jrebel.com/blog/best-javafx-libraries) -
+  list of JavaFX libraries we may want to check out (I pulled some for this list)
 
 ## Git Resources
 - [Git Mastery Tutorial](https://www.freecodecamp.org/news/git-for-professionals/)
@@ -679,14 +696,14 @@ list of JavaFX libraries we may want to check out (I pulled some for this list)
 
 ## Misc Resources
 May be useful for later on, may not
-- [Running Commands](https://www.journaldev.com/937/compile-run-java-program-another-java-program) - 
-processes etc.
-- [System Properties](https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html) - 
-System constants such as directory location etc.
-- [Bean Class JavaFX](https://www.omnijava.com/2017/08/29/the-bean-class-for-javafx-programming/) - 
-Style of Property classes
+- [Running Commands](https://www.journaldev.com/937/compile-run-java-program-another-java-program) -
+  processes etc.
+- [System Properties](https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html) -
+  System constants such as directory location etc.
+- [Bean Class JavaFX](https://www.omnijava.com/2017/08/29/the-bean-class-for-javafx-programming/) -
+  Style of Property classes
 - [Pattern Documentation](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html#sum) - Java Regex
-- [regex101](https://regex101.com/) - use the java8 tab, great for testing regex with 
-documentation and help
-- [Preferences](https://docs.oracle.com/javase/8/docs/api/java/util/prefs/Preferences.html) - 
-Automatically store and retrieve user preferences (Builtin Database)
+- [regex101](https://regex101.com/) - use the java8 tab, great for testing regex with
+  documentation and help
+- [Preferences](https://docs.oracle.com/javase/8/docs/api/java/util/prefs/Preferences.html) -
+  Automatically store and retrieve user preferences (Builtin Database)
