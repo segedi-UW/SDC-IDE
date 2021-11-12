@@ -66,7 +66,7 @@ fxml file and an `FXMLLoader` object (more on that below)
 ### FXML
 Now I want to look at the FXML file. In our Application it is under our module resources named
 **Controller.fxml**.
-~~~ 
+```fxml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
@@ -84,7 +84,7 @@ Now I want to look at the FXML file. In our Application it is under our module r
       <Button text="Hello!" onAction="#onHelloButtonClick"/>
     </children>
 </VBox>
-~~~
+```
 As you can see FXML is XML based and follows a similar format using angle brackets for delimiters.
 Note that each follows the format (besides special `<?command data>`) of `<Object [properties]/>`
 or `<Object [properties]></Object>`. When using the `<></>` notation, properties can be specified
