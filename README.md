@@ -441,7 +441,7 @@ In a moment you will see some code that utilizes Java method lambdas! They are p
 I don't expect you to know what they are, so I am prefacing them here.
 
 A standard lambda is a shortened version of an abstract class.
-in java, there are two forms of lambda - the one line and the multiline form.
+In java, there are two forms of lambda - the one line and the multiline form.
 
 ```java
 public class SomeClass {
