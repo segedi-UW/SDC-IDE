@@ -484,6 +484,7 @@ public class SomeClass {
 This allows a usual multiline lambda to be defined in an external function! This is very cool
 and allows for cleaner code, but is more verbose than it needs to be.
 Since lambdas work to reduce this, there is a better lambda solution:
+
 ```java
 public class SomeClass {
 
@@ -497,8 +498,13 @@ public class SomeClass {
 
 }
 ```
-The first part is the class or object that the method is a part of. The second part is the method name. The two parts are
-connected with two colons. Syntax: `<class>::<method name>`.
+
+The first part is the class or object that the method is a part of and the second part is the method name. These two parts are
+connected with two colons in the form: `<class>::<method name>`. As you can see this can only be done with methods that 
+take parameters that are the exact same as the lambda (calling method) provides. When used they reduce redundant code in the one line
+referencing a method. Referencing a method in this way instead of writing the method's contents in a multiline lambda at
+the location is useful for separating code for handling events from code that sets up the handlers for the
+events, which we will encounter and use a lot while working on our project. 
 
 ### Alert and Dialog
 The JavaFX `Alert` and `Dialog` class have their own scenes and stage, and as the name suggests
