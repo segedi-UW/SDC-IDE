@@ -17,35 +17,35 @@ JavaFX uses Properties and Bindings to separate data and code - UI components wi
 automatically updated when the state of a variable changes provided we use this API. It
 is necessary that we do a great job working with this if we want an easy to manage system
 - I will create a tutorial on this shortly (as of 10/19/2021 no tutorial). There are plenty
-of online tutorials as well.
+  of online tutorials as well.
 
 JavaFX starts a JavaFX Application Thread after calling one of a few `launch()` methods from
-or passing a subclass of `Application`. After initialization JavaFX calls that subclasses 
-`@Override start(Stage)` method, providing the primary Stage for the application. The `Scene` 
+or passing a subclass of `Application`. After initialization JavaFX calls that subclasses
+`@Override start(Stage)` method, providing the primary Stage for the application. The `Scene`
 can be created either in plain java (messy), or in FXML using the `FXMLLoader` class, which is
 what we will be doing. JavaFX `Node`s can be styled using style sheets with special JavaFX CSS
 grammar which we will also use.
 
 ## Our Application
 So with how our project is currently configured, our application starts in the `App` class.
-`App` extends `Application`, for now it includes `main` which launches JavaFX. Any 
-JavaFX application must be launched before most of the JavaFX Objects can be used 
+`App` extends `Application`, for now it includes `main` which launches JavaFX. Any
+JavaFX application must be launched before most of the JavaFX Objects can be used
 (visible graphics etc.). Our primitive `App` contains the following:
 ```java
 public class App extends Application {
-    
-    @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240); // Parent, width, height
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
-    }
 
-    public static void main(String[] args) {
-        launch();
-    }
+  @Override
+  public void start(Stage stage) throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("hello-view.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 320, 240); // Parent, width, height
+    stage.setTitle("Hello!");
+    stage.setScene(scene);
+    stage.show();
+  }
+
+  public static void main(String[] args) {
+    launch();
+  }
 }
 ```
 In JavaFX when we launch the Application, JavaFX creates an object of our classes type.
@@ -61,7 +61,7 @@ method to obtain the `Parent` object to provide our `Scene`.
 2. JavaFX initializes its event dispatch Thread, and graphics etc.
 3. JavaFX calls `@Override start(Stage stage)` in the `App` object
 4. Using the passed stage we initialize the `Scene` using a previously created
-fxml file and an `FXMLLoader` object (more on that below)
+   fxml file and an `FXMLLoader` object (more on that below)
 
 ### FXML
 Now I want to look at the FXML file. In our Application it is under our module resources named
@@ -101,12 +101,12 @@ properties that we can / need to specify. The first is the **xmlns:fx**. This is
 if we plan on utilizing _injection_ to populate our Controller class with `fx:id` named objects
 (discussed later).
 **Note that `fx:id` is different from `id`! `id` is used with CSS to define a particular nodes
-style**. 
+style**.
 
 Additionally, the controller is specified with the `fx:controller` property (which as
 you see requires the `xmlns:fx`). This is optional for use with controllers, but when we define
 it in the FXML file, an unreferenced controller class is instantiated automatically by JavaFX. If we leave
-this line out, we need to set the controller of the `FXMLLoader` before calling `load()`. 
+this line out, we need to set the controller of the `FXMLLoader` before calling `load()`.
 
 #### Default Property
 In FXML each class has a default property that when no property is specified is modified by the
@@ -131,27 +131,27 @@ makes this redundant.
 The `FXMLLoader` is very robust and can create any JavaFX object providing it has a default constructor.
 We can take advantage of this by subclassing JavaFX objects, so we can create our own custom objects.
 In JavaFX subclassing is the primary way of implementing custom objects. Think perhaps a `Control` that
-internally incorporates multiple other `Control` objects - such as subclassing a  `VBox` and 
+internally incorporates multiple other `Control` objects - such as subclassing a  `VBox` and
 then adding a `TextArea` and `Button` to it in its default constructor etc.
 
 For example:
 ```java
 public class Chat extends VBox {
 
-    private TextArea chat;
-    private Button sendBtn;
-    private TextField input;
-    
-    public Chat() {
-        super();
-        area = new TextArea();
-        input = new TextField();
-        sendBtn = new Button("Send");
-        HBox box = new HBox(input, sendBtn);
-        getChildren().addAll(area, box);
-    }
-    
-    /* other methods dealing with fields */
+  private TextArea chat;
+  private Button sendBtn;
+  private TextField input;
+
+  public Chat() {
+    super();
+    area = new TextArea();
+    input = new TextField();
+    sendBtn = new Button("Send");
+    HBox box = new HBox(input, sendBtn);
+    getChildren().addAll(area, box);
+  }
+
+  /* other methods dealing with fields */
 }
 ```
 So now we can use `Chat` in an FXML file as an object (after importing it), and this is
@@ -159,7 +159,7 @@ what would be created. Our `Chat` object would share all properties of a
 `VBox`, but we would not need to add the fields to it in the fxml file since that is
 handled in the constructor.
 
-Another way of achieving this that is nice for elaborate subclasses 
+Another way of achieving this that is nice for elaborate subclasses
 is given after the following introduction to Controllers.
 
 ### Controller
@@ -168,18 +168,18 @@ These properties can be initialized using FXML as seen in the example code above
 to cover two things. To start, lets look at our last beginning class, the `Controller` class.
 ```java
 public class Controller {
-    @FXML
-    private Label welcomeText;
+  @FXML
+  private Label welcomeText;
 
-    @FXML
-    private void initialize() {
-        // TODO
-    }
+  @FXML
+  private void initialize() {
+    // TODO
+  }
 
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
+  @FXML
+  protected void onHelloButtonClick() {
+    welcomeText.setText("Welcome to JavaFX Application!");
+  }
 }
 ```
 There are three things to cover here:
@@ -190,7 +190,7 @@ There are three things to cover here:
 ##### Injection
 For injection, we provide the `fx:id` property with a **unique** name prefaced with the `@FXML` annotation.
 Note that the object needs to be named exactly the same in the controller class, again as seen above.
-You will notice that the nice thing about injection is that fields and methods can be hidden from classes if we want! 
+You will notice that the nice thing about injection is that fields and methods can be hidden from classes if we want!
 This is very nice for abstraction, but it is not required. Public or protected methods are allowed too.
 
 #### Function calls
@@ -251,56 +251,56 @@ Chat.java
  * child which is a container itself - the VBox defined in chat.fxml
  */
 public class Chat extends StackPane {  // <----- see above
-    @FXML private TextArea chat;
-    @FXML private TextField input;
+  @FXML private TextArea chat;
+  @FXML private TextField input;
 
-    public Chat() {
-        super();
-        try {
-            FXMLLoader loader = App.toLoader("chat.fxml");
-            loader.setControllerFactory(callback -> this); // IMPORTANT LINE
-            getChildren().add(loader.load());
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not load chat.fxml: " + e.getMessage());
-        }
+  public Chat() {
+    super();
+    try {
+      FXMLLoader loader = App.toLoader("chat.fxml");
+      loader.setControllerFactory(callback -> this); // IMPORTANT LINE
+      getChildren().add(loader.load());
+    } catch (IOException e) {
+      throw new IllegalStateException("Could not load chat.fxml: " + e.getMessage());
     }
-    
-    @FXML
-    private void sendChat() {
-        /* send the message */
-        chat.setText(String.format("%s\n> %s", chat.getText(), input.getText()));
-        input.setText("");
-    }
+  }
 
-    @FXML
-    public void switchToHome() throws IOException {
-        FXMLLoader loader = App.toLoader("controller.fxml");
-        Scene home = new Scene(loader.load(), 320, 240);
-        App.addDefaultStylesheets(home);
-        App.setScene(home);
-    }
+  @FXML
+  private void sendChat() {
+    /* send the message */
+    chat.setText(String.format("%s\n> %s", chat.getText(), input.getText()));
+    input.setText("");
+  }
+
+  @FXML
+  public void switchToHome() throws IOException {
+    FXMLLoader loader = App.toLoader("controller.fxml");
+    Scene home = new Scene(loader.load(), 320, 240);
+    App.addDefaultStylesheets(home);
+    App.setScene(home);
+  }
 }
 ```
 If we did not specify the controller factory in this object, the
 `FXMLLoader` would create a _new instance of Chat_ rather than using
-the created one. Our calls to our object would be useless. This is 
+the created one. Our calls to our object would be useless. This is
 described in more depth later on as well.
 
 A Scene including this object would be created like so:
 ```java
 public class SomeClass {
-    
-    @FXML
-    public void switchToChat(ActionEvent actionEvent) throws IOException {
-        // ActionEvent is not used, simply included as an example
-        actionEvent.consume(); // not necessary and sometimes not wanted - only for example
-        // consume stops this actionEvent from being passed on to other objects, if for example we wanted to stop
-        // a dialog from closing unless a certain field has valid input we could use a similar construct to this.
-        // if you want to know how to do that simply ask me.
-        Scene chat = new Scene(new Chat(), 320, 240); // this instance can be kept for use as well
-        App.addDefaultStylesheets(chat);
-        App.setScene(chat);
-    }
+
+  @FXML
+  public void switchToChat(ActionEvent actionEvent) throws IOException {
+    // ActionEvent is not used, simply included as an example
+    actionEvent.consume(); // not necessary and sometimes not wanted - only for example
+    // consume stops this actionEvent from being passed on to other objects, if for example we wanted to stop
+    // a dialog from closing unless a certain field has valid input we could use a similar construct to this.
+    // if you want to know how to do that simply ask me.
+    Scene chat = new Scene(new Chat(), 320, 240); // this instance can be kept for use as well
+    App.addDefaultStylesheets(chat);
+    App.setScene(chat);
+  }
 
 }
 ```
@@ -314,45 +314,45 @@ We have talked about the basics of everything except JavaFX CSS. Our code from e
 involved. I have made a few modifications to the `App` class as seen here:
 ```java
 public class App extends Application {
-    public static void setScene(Scene scene) {
-        if (mainStage == null) throw new NullPointerException("Attempted to set scene of mainStage before initialization");
-        mainStage.setScene(scene);
-    }
+  public static void setScene(Scene scene) {
+    if (mainStage == null) throw new NullPointerException("Attempted to set scene of mainStage before initialization");
+    mainStage.setScene(scene);
+  }
 
-    /**
-     * Returns a FXMLLoader of a given system resource
-     * @param resource the resource name
-     * @return a FXMLLoader with a non-null FXML sheet
-     * @throws NullPointerException if resource does not exist
-     */
-    public static FXMLLoader fxmlLoader(String resource) {
-        return new FXMLLoader(toResourceURL(resource));
-    }
+  /**
+   * Returns a FXMLLoader of a given system resource
+   * @param resource the resource name
+   * @return a FXMLLoader with a non-null FXML sheet
+   * @throws NullPointerException if resource does not exist
+   */
+  public static FXMLLoader fxmlLoader(String resource) {
+    return new FXMLLoader(toResourceURL(resource));
+  }
 
-    /**
-     * Adds the stylesheet.css file and the BootstrapFX stylesheet to the Scene. This
-     * should be called on all new Stages / Scenes in order to maintain a consistent look
-     * for the Application.
-     * @param scene the scene to add the stylesheets to.
-     * @throws NullPointerException if stylesheet.css is not on the resource path
-     */
-    public static void addDefaultStylesheets(Scene scene) {
-        String custom = toResourceURL("stylesheet.css").toExternalForm();
-        scene.getStylesheets().addAll(BootstrapFX.bootstrapFXStylesheet(), custom);
-        // our custom sheet has the highest precedence when added last
-    }
+  /**
+   * Adds the stylesheet.css file and the BootstrapFX stylesheet to the Scene. This
+   * should be called on all new Stages / Scenes in order to maintain a consistent look
+   * for the Application.
+   * @param scene the scene to add the stylesheets to.
+   * @throws NullPointerException if stylesheet.css is not on the resource path
+   */
+  public static void addDefaultStylesheets(Scene scene) {
+    String custom = toResourceURL("stylesheet.css").toExternalForm();
+    scene.getStylesheets().addAll(BootstrapFX.bootstrapFXStylesheet(), custom);
+    // our custom sheet has the highest precedence when added last
+  }
 
-    /**
-     * Returns a non-null URL of an Application resource.
-     * @param resource the resource name
-     * @return non-null URL
-     * @throws NullPointerException if resource does not exist
-     */
-    public static URL toResourceURL(String resource) {
-        URL url = App.class.getResource(resource);
-        if (url == null) throw new NullPointerException(String.format("Resource \"%s\" was not found", resource));
-        return url;
-    }
+  /**
+   * Returns a non-null URL of an Application resource.
+   * @param resource the resource name
+   * @return non-null URL
+   * @throws NullPointerException if resource does not exist
+   */
+  public static URL toResourceURL(String resource) {
+    URL url = App.class.getResource(resource);
+    if (url == null) throw new NullPointerException(String.format("Resource \"%s\" was not found", resource));
+    return url;
+  }
 }
 ```
 All I have done is added some checks for null resources - these should be fatal errors here since if
@@ -446,37 +446,37 @@ In java, there are two forms of lambda - the one line and the multiline form.
 ```java
 public class SomeClass {
 
-private interface DoMath {
+  private interface DoMath {
     double calculate(double n1, double n2);
-}
+  }
 
-    public void someMethod() {
-        // multiline
-        DoMath add = (add1, add2) -> {
-            return add1 + add2;
-        };
+  public void someMethod() {
+    // multiline
+    DoMath add = (add1, add2) -> {
+      return add1 + add2;
+    };
 
-        // one line - return is expected and is not explicit here
-        add = (add1, add2) -> add1 + add2;
-    }
+    // one line - return is expected and is not explicit here
+    add = (add1, add2) -> add1 + add2;
+  }
 }
 ```
 
 The one line version of the lambda can be expressed as this:
 ```java
 public class SomeClass {
-    
-    public void someMethod() {
-        // old one line
-        add = (add1, add2) -> add1 + add2;
 
-        // new one line using a method instead
-        add = (add1, add2) -> add(add1, add2);
-    }
+  public void someMethod() {
+    // old one line
+    add = (add1, add2) -> add1 + add2;
 
-    public double add(double add1, double add2) {
-        return add1 + add2;
-    }
+    // new one line using a method instead
+    add = (add1, add2) -> add(add1, add2);
+  }
+
+  public double add(double add1, double add2) {
+    return add1 + add2;
+  }
 
 }
 ```
@@ -488,23 +488,23 @@ Since lambdas work to reduce this, there is a better lambda solution:
 ```java
 public class SomeClass {
 
-    public void someMethod() {
-        add = this::add;
-    }
+  public void someMethod() {
+    add = this::add;
+  }
 
-    public double add(double add1, double add2) {
-        return add1 + add2;
-    }
+  public double add(double add1, double add2) {
+    return add1 + add2;
+  }
 
 }
 ```
 
 The first part is the class or object that the method is a part of and the second part is the method name. These two parts are
-connected with two colons in the form: `<class>::<method name>`. As you can see this can only be done with methods that 
+connected with two colons in the form: `<class>::<method name>`. As you can see this can only be done with methods that
 take parameters that are the exact same as the lambda (calling method) provides. When used they reduce redundant code in the one line
 referencing a method. Referencing a method in this way instead of writing the method's contents in a multiline lambda at
 the location is useful for separating code for handling events from code that sets up the handlers for the
-events, which we will encounter and use a lot while working on our project. 
+events, which we will encounter and use a lot while working on our project.
 
 ### Alert and Dialog
 The JavaFX `Alert` and `Dialog` class have their own scenes and stage, and as the name suggests
@@ -514,14 +514,14 @@ a dialog that prompts the user to save their workspace before exiting the applic
 ```java
 public class ExitAlert extends Alert {
 
-    public ExitAlert() {
-        super(AlertType.CONFIRMATION);
-        // design code
-        App.addDefaultStylesheets(getDialogPane().getScene()); // check method path
-        setHeaderText("Exit And Save?");
-        setContentText("Click \"OK\" to exit and save your workspace.");
-        setTitle("Exit And Save");
-    }
+  public ExitAlert() {
+    super(AlertType.CONFIRMATION);
+    // design code
+    App.addDefaultStylesheets(getDialogPane().getScene()); // check method path
+    setHeaderText("Exit And Save?");
+    setContentText("Click \"OK\" to exit and save your workspace.");
+    setTitle("Exit And Save");
+  }
 
 }
 ```
@@ -530,27 +530,27 @@ likely to return something. In that case it may look like the following:
 ```java
   public class FormDialog extends Dialog<Form> {
 
-    @FXML private TextField name;
-    @FXML private CheckBox isMale;
+  @FXML private TextField name;
+  @FXML private CheckBox isMale;
 
-    public FormDialog() {
-        super();
-        // see above Alert for similar design API calls:  
-        // set various text and add default stylesheets!
-        setResultConverter(this::formResult);
+  public FormDialog() {
+    super();
+    // see above Alert for similar design API calls:  
+    // set various text and add default stylesheets!
+    setResultConverter(this::formResult);
 
-        FXMLLoader loader = App.toLoader("formDialog.fxml");
-        // set this object as controller so that resultConverter can utilize controller injected fields etc.
-        loader.setControllerFactory(callback -> this);
-        getDialogPane().setContent(loader.load());
-    }
+    FXMLLoader loader = App.toLoader("formDialog.fxml");
+    // set this object as controller so that resultConverter can utilize controller injected fields etc.
+    loader.setControllerFactory(callback -> this);
+    getDialogPane().setContent(loader.load());
+  }
 
-    private Form formResult(ButtonType button) {
-        // process code
-        if (button == ButtonType.OK)
-            return new Form(name.getText(), isMale.isSelected());
-        return null;
-    }
+  private Form formResult(ButtonType button) {
+    // process code
+    if (button == ButtonType.OK)
+      return new Form(name.getText(), isMale.isSelected());
+    return null;
+  }
 }
 ```
 Of course, I am being very brief here - I just want to expose you to this a bit to give you a
@@ -581,37 +581,37 @@ See the JavaFX documentation on `Dialog` for more information and specifics.
 Now that we have implemented these subclasses, we can use them in our program as follows:
 ```java
 public class SomeClass {
-    
-public someAlertMethod() {
-        ExitAlert alert = new ExitAlert();
-        alert.showAndWait(this::save);
-        }
 
-private save(ButtonType button) {
-        switch (button) {
-        case ButtonType.OK:
+  public someAlertMethod() {
+    ExitAlert alert = new ExitAlert();
+    alert.showAndWait(this::save);
+  }
+
+  private save(ButtonType button) {
+    switch (button) {
+      case ButtonType.OK:
         // save the data
         saveData();
         // fall through
-        case ButtonType.NO:
+      case ButtonType.NO:
         // exit
         Platform.exit(); // JavaFX exits the Application
         break;
-default: // includes ButtonType.CANCEL
+      default: // includes ButtonType.CANCEL
         // don't save, don't exit
         break;
-        }
-        }
+    }
+  }
 
-public someMethod() {
-        FormDialog dialog = new FormDialog();
-        dialog.showAndWait().ifPresent(this::addForm);
-        }
+  public someMethod() {
+    FormDialog dialog = new FormDialog();
+    dialog.showAndWait().ifPresent(this::addForm);
+  }
 
-private addForm(Form form) {
-        // form will never be null
-        forms.add(form); // or whatever etc.
-        }
+  private addForm(Form form) {
+    // form will never be null
+    forms.add(form); // or whatever etc.
+  }
 
 }
 ```
