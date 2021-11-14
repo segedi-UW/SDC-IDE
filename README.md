@@ -548,7 +548,7 @@ likely to return something. In that case it may look like the following:
     private Form formResult(ButtonType button) {
         // process code
         if (button == ButtonType.OK)
-            return new Form(name.getText(), isMale.getSelected());
+            return new Form(name.getText(), isMale.isSelected());
         return null;
     }
 }
