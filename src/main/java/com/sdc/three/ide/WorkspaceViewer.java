@@ -39,6 +39,13 @@ public class WorkspaceViewer extends TreeView<File> implements Filesystem {
         init();
     }
 
+    public WorkspaceViewer(File dir) throws InvalidFileException, IOException {
+        super();
+        Workspace wk = new Workspace(dir);
+        loadWorkspace(wk);
+        init();
+    }
+
     private void init() throws IOException {
         setEditable(false);
     }
@@ -54,32 +61,11 @@ public class WorkspaceViewer extends TreeView<File> implements Filesystem {
         this.workspace = workspace;
         workspace.setExpanded(true);
         setRoot(workspace);
-        File dir = workspace.getDirectory();
-        // TODO implement FileVisitor
         setupWatch();
     }
 
     private void addFile(File file) {
-        // TODO Add the file to the display
-    }
-
-    @Override
-    public Workspace createWorkspace(File dir, String name) throws IOException {
-        if (dir == null || name == null) {
-            String error = (dir == null ? "directory":"name");
-            throw new NullPointerException("The " + error + " is null");
-        }
-        if (!dir.isDirectory() && !dir.mkdir())
-            throw new IOException(String.format("Could not make %s a directory", dir.getName()));
-
-        try {
-            File file = new File(dir, name + Workspace.EXTENSION);
-            Workspace workspace = new Workspace(file);
-            loadWorkspace(workspace);
-            return workspace;
-        } catch (InvalidFileException e) {
-            throw new IllegalStateException("BUG: createWorkspace() created an invalid workspace file");
-        }
+        // TODO Add the file to the workspace display
     }
 
     @Override

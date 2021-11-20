@@ -14,15 +14,6 @@ public interface Filesystem {
     void loadWorkspace(Workspace workspace) throws IOException;
 
     /**
-     * Creates a new workspace in the given directory
-     * @param directory
-     * @throws IOException if an IO error occurs
-     * @throws NullPointerException if the directory or name is null
-     * @returns a Workspace within the provided directory
-     */
-    Workspace createWorkspace(File directory, String name) throws IOException;
-
-    /**
      * Saves a workspace directory and its files or the individual file in the directory
      * @param file
      * @throws IOException
