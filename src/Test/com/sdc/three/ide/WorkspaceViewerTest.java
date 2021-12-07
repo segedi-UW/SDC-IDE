@@ -2,7 +2,6 @@ package com.sdc.three.ide;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
@@ -22,7 +21,7 @@ public class WorkspaceViewerTest {
     private WorkspaceViewer view;
 
     /**
-     * Will be called with {@code @Before} semantics, i. e. before each test method.
+     * Will be called with {@code @Before} semantics, i.e. before each test method.
      *
      * @param stage - Will be injected by the test runner.
      */
@@ -37,17 +36,15 @@ public class WorkspaceViewerTest {
         stage.show();
     }
 
-    /**
-     * @param robot - Will be injected by the test runner.
-     */
     @Test
-    void selection(FxRobot robot) {
+    void selection() {
+        // param FxRobot
         // TODO
         fail("Not implemented");
     }
 
     @Test
-    void autoUpdates(FxRobot robot) {
+    void autoUpdates() {
         // TODO
         fail("Not implemented");
     }
