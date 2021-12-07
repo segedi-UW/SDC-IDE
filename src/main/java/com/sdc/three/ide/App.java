@@ -21,6 +21,8 @@ public class App extends Application {
         addDefaultStylesheets(scene);
         stage.setTitle("This is the title!");
         stage.setScene(scene);
+//        JMetro jMetro = new JMetro(Style.LIGHT);
+//        jMetro.setScene(scene);
         stage.show();
     }
 
