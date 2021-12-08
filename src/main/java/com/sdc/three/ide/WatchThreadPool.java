@@ -13,6 +13,7 @@ public class WatchThreadPool {
     private final LinkedList<WatchThread> threads = new LinkedList<>();
     private final static int PROCESSORS = Runtime.getRuntime().availableProcessors();
     private final static float CREATE_CHANCE = 0.30f;
+    private final static float MAX_THREADS = PROCESSORS * 2;
     private final static Map<WatchKey, Path> dirs = Collections.synchronizedMap(new HashMap<>());
 
     public WatchThreadPool(FileChangeListener listener) throws IOException {
@@ -28,7 +29,7 @@ public class WatchThreadPool {
         try {
             WatchKey dirKey = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
             dirs.put(dirKey, dir);
-            if (threads.size() < 3 || threads.size() < PROCESSORS / 3 || Math.random() <= CREATE_CHANCE) {
+            if (threads.size() < 3 || (threads.size() < MAX_THREADS && Math.random() <= CREATE_CHANCE)) {
                 WatchThread watchThread = new WatchThread();
                 threads.add(watchThread);
                 watchThread.getThread().start();
