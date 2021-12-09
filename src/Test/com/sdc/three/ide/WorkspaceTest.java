@@ -78,7 +78,7 @@ class WorkspaceTest {
     void fileAdd() {
         File g = new File(tmp.toFile(), "G");
         File h = new File(tmp.toFile(), "H");
-        Waiter.waitOnRun(wk, e -> wk.getModifiedFiles().size() < 2, () ->
+        Waiter.waitOnRun(wk, e -> wk.getFilesToSave().size() < 2, () ->
             assertDoesNotThrow(() -> {
                 assertTrue(g.createNewFile());
                 assertTrue(h.createNewFile());
@@ -122,9 +122,9 @@ class WorkspaceTest {
     @Test
     void fileModified() {
         Path file = Path.of(path.toString(), "dir", "dir2", "F");
-        Waiter.waitOnRun(wk, (e) -> wk.getModifiedFiles().size() < 1, () ->
+        Waiter.waitOnRun(wk, (e) -> wk.getFilesToSave().size() < 1, () ->
             assertDoesNotThrow(() -> Files.writeString(file, "Testing Modified!", StandardOpenOption.TRUNCATE_EXISTING)));
-        assertEquals(1, wk.getModifiedFiles().size());
+        assertEquals(1, wk.getFilesToSave().size());
     }
 
     private boolean containsAll(TreeItem<Path> root, String ... names) {

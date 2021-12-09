@@ -15,11 +15,29 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static com.sdc.three.ide.FileEvent.MODIFIED;
 import static java.nio.file.FileVisitResult.CONTINUE;
 
+/**
+ * The Workspace takes care of file management, including saving and automatically updating for files added to the filesystem
+ * within the workspace context (the root directory and child directories).
+ *
+ * UI interaction with the Workspace occurs through the WorkspaceViewer class which extends a TreeView object and can
+ * be called with the respective methods TreeView provides in addition to getting the Workspace object.
+ *
+ * Since this object takes care of automatically updating files in the provided directories, there is no implicit
+ * file adding methods as they are done by simply creating the files as would normally be done.
+ *
+ * For efficient saving of all changed files, it is recommended that one uses {@link #getFilesToSave()}, then calls
+ * {@link #save(Path, String)} for each file.
+ *
+ * Files are added to {@link #filesToSave} when they are modified only. Newly created files are considered saved. When files
+ * are removed from the directory, they are also similarly removed form {@link #filesToSave}
+ *
+ * @author Anthony Segedi
+ */
 public class Workspace implements Filesystem, FileChangeListener {
 
     private final Path dir;
     private final WatchThreadPool watchPool;
-    private final ObservableMap<Path, FileEvent> modifiedFiles = FXCollections.synchronizedObservableMap(FXCollections.observableHashMap());
+    private final ObservableMap<Path, FileEvent> filesToSave = FXCollections.synchronizedObservableMap(FXCollections.observableHashMap());
     private final TreeItem<Path> root;
     private final LinkedList<FileChangeListener> listeners = new LinkedList<>();
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -36,38 +54,42 @@ public class Workspace implements Filesystem, FileChangeListener {
     @Override
     public void save(Path path, String string) throws IOException {
         Files.writeString(path, string, StandardOpenOption.TRUNCATE_EXISTING);
-        modifiedFiles.remove(path);
+        filesToSave.remove(path);
     }
 
     @Override
-    public ReadOnlyMapWrapper<Path, FileEvent> getModifiedFiles() {
-        return new ReadOnlyMapWrapper<>(modifiedFiles);
+    public ReadOnlyMapWrapper<Path, FileEvent> getFilesToSave() {
+        return new ReadOnlyMapWrapper<>(filesToSave);
     }
 
     @Override
     public void filesystemChanged(Path path, FileEvent event) {
         if (event == MODIFIED) {
-            modifiedFiles.put(path, event);
+            filesToSave.put(path, event);
         } else {
             TreeItem<Path> item = getClosestItem(path);
             switch(event) {
                 case ADDED:
                     lock.writeLock().lock();
                     Path added = addPathTo(item, path);
-                    modifiedFiles.put(added, event);
+                    if (added.toFile().isDirectory())
+                        if (!watchPool.register(added))
+                            System.err.println("Failed to register " + added);
                     lock.writeLock().unlock();
                     break;
                 case REMOVED:
-                    modifiedFiles.put(path, event);
+                    filesToSave.remove(path);
                     try {
                         lock.writeLock().lock();
-                        TreeItem<Path> toRemove = getItem(path);
-                        TreeItem<Path> parent = toRemove.getParent();
+                        final TreeItem<Path> toRemove = getItem(path);
+                        final TreeItem<Path> parent = toRemove.getParent();
                         if (!parent.getChildren().remove(toRemove)) {
-                            System.err.println("Failed to remove" + item.getValue());
+                            System.err.printf("WARNING: Failed to remove %s from %s", item.getValue(), parent.getValue());
                         }
+                        if (path.toFile().isDirectory())
+                            watchPool.unregister(path);
                     } catch (NoSuchElementException e) {
-                        System.err.println("Failed to remove" + item.getValue());
+                        System.err.printf("WARNING: Failed to remove %s, as %<s did not exist", item.getValue());
                     }
                     lock.writeLock().unlock();
                     break;
@@ -133,13 +155,13 @@ public class Workspace implements Filesystem, FileChangeListener {
     }
 
     private Path addPathTo(TreeItem<Path> item, Path path) {
+        // lock should be held before entering here!
+        if (!lock.writeLock().isHeldByCurrentThread()) throw new IllegalStateException("Current thread does not hold the writeLock!");
         if (item.getValue().equals(path)) {
             System.err.println("Path already exists in tree: " + path);
             return path;
         }
         Path toAdd = item.getValue().relativize(path);
-        // lock should be held before entering here!
-        if (!lock.writeLock().isHeldByCurrentThread()) throw new IllegalStateException("Current thread does not hold the writeLock!");
         for(Path p : toAdd) {
             TreeItem<Path> next = new TreeItem<>(item.getValue().resolve(p));
             item.getChildren().add(next);
