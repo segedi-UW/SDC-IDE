@@ -1,120 +1,101 @@
 package com.sdc.three.ide;
 
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static java.nio.file.StandardWatchEventKinds.*;
+public class WorkspaceViewer extends TreeView<Path> {
 
-public class WorkspaceViewer extends TreeView<File> implements Filesystem {
-
-    private final WatchService watcher = FileSystems.getDefault().newWatchService();
-
-    private final Set<File> modifiedFiles = Collections.synchronizedSet(new LinkedHashSet<>());
     private Workspace workspace;
-    private WatchKey watchKey;
-
-    /**
-     * Creates a WorkspaceViewer of an empty workspace
-     */
-    public WorkspaceViewer() throws IOException {
-        super();
-        init();
-    }
+    private static final HashMap<String, Image> fileGraphics = initFileGraphics();
+    private static final String generalFileExtension = ".*";
 
     /**
      * Creates a WorkspaceViewer of a given workspace
-     * @param workspace
-     * @throws FileNotFoundException if the file does not exist
-     * @throws InvalidFileException if the file is not a valid workspace directory
-     * @throws NullPointerException if the file is null
+     * @param workspace the workspace to view or null for an empty workspace
      */
-    public WorkspaceViewer(Workspace workspace) throws IOException {
+    public WorkspaceViewer(Workspace workspace) {
         super();
-        loadWorkspace(workspace);
-        init();
-    }
-
-    private void init() throws IOException {
+        setCellFactory(view -> new TreeCellPathSkin());
         setEditable(false);
+        setShowRoot(true);
+        setWorkspace(workspace);
+        refresh();
     }
 
-    private void setupWatch() throws IOException {
-        if (watchKey != null) watchKey.cancel();
-        Path path = workspace.getDirectory().toPath();
-        path.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+    public Workspace getWorkspace() {
+        return workspace;
     }
 
-    @Override
-    public void loadWorkspace(Workspace workspace) throws IOException {
+    private static HashMap<String, Image> initFileGraphics() {
+        HashMap<String, Image> map = new HashMap<>();
+        final String resourceDirectory = "images/";
+        map.put(generalFileExtension, resourceToIcon(resourceDirectory + "file-gen.png"));
+        map.put(File.separator, resourceToIcon(resourceDirectory + "directory.png"));
+        map.put(".java", resourceToIcon(resourceDirectory + "file-java.png"));
+        map.put(".jpeg", resourceToIcon(resourceDirectory + "file-jpeg.png"));
+        return map;
+    }
+
+    private static Image resourceToIcon(String resource) {
+        return new Image(App.toResourceURL(resource).toExternalForm(), 20.0, 20.0, true, true);
+    }
+
+    public void setWorkspace(Workspace workspace) {
         this.workspace = workspace;
-        workspace.setExpanded(true);
-        setRoot(workspace);
-        File dir = workspace.getDirectory();
-        // TODO implement FileVisitor
-        setupWatch();
-    }
-
-    private void addFile(File file) {
-        // TODO Add the file to the display
-    }
-
-    @Override
-    public Workspace createWorkspace(File dir, String name) throws IOException {
-        if (dir == null || name == null) {
-            String error = (dir == null ? "directory":"name");
-            throw new NullPointerException("The " + error + " is null");
-        }
-        if (!dir.isDirectory() && !dir.mkdir())
-            throw new IOException(String.format("Could not make %s a directory", dir.getName()));
-
-        try {
-            File file = new File(dir, name + Workspace.EXTENSION);
-            Workspace workspace = new Workspace(file);
-            loadWorkspace(workspace);
-            return workspace;
-        } catch (InvalidFileException e) {
-            throw new IllegalStateException("BUG: createWorkspace() created an invalid workspace file");
+        if (workspace != null) {
+            TreeItem<Path> root = workspace.getRoot();
+            root.setExpanded(true);
+            setRoot(root);
         }
     }
 
-    @Override
-    public void save(File file, String string) throws IOException {
-        Files.writeString(file.toPath(), string, StandardOpenOption.TRUNCATE_EXISTING);
-    }
-
-    @Override
-    public Set<File> getModifiedFiles() {
-        return new HashSet<>(modifiedFiles);
-    }
-
-    private class WatchThread implements Runnable {
-
-        private final Thread thread;
-        private volatile boolean isRunning;
-
-        private WatchThread() {
-            thread = new Thread(this);
-            thread.setDaemon(true);
-        }
-
-        public void start() {
-            thread.start();
-        }
+    /**
+     * Attributions:
+     * directory image: https://www.freeiconspng.com/img/12404
+     * file image (I modified all files off this one): https://pixabay.com/illustrations/file-icon-vector-file-jpeg-icon-3671169/
+     */
+    private static class TreeCellPathSkin extends TreeCell<Path> {
 
         @Override
-        public void run() {
-            try {
-                while (isRunning) {
-                    WatchKey key = watcher.take();
-                }
-            } catch (InterruptedException e) {
-                System.err.println("WatchThread Interrupted: Canceling");
+        protected void updateItem(Path path, boolean isEmpty) {
+            super.updateItem(path, isEmpty);
+            // sets text as only the trailing name
+            if (isEmpty || path == null) {
+                setText(null);
+                setGraphic(null);
+                return;
             }
+
+            setText(path.getFileName().toString());
+            setGraphic(getFileGraphic(path));
         }
+
+        private ImageView getFileGraphic(Path path) {
+            final String extension = getExtension(path);
+            final Image image = fileGraphics.get(extension);
+            return image != null ? new ImageView(image) : new ImageView(fileGraphics.get(generalFileExtension));
+        }
+
+        private String getExtension(Path path) {
+            if (path.toFile().isDirectory())
+                return File.separator;
+
+            final Pattern extension = Pattern.compile("\\.+.+$");
+            final Matcher matcher = extension.matcher(path.getFileName().toString());
+            if (matcher.find())
+                return matcher.group();
+
+            return generalFileExtension;
+        }
+
     }
 }
