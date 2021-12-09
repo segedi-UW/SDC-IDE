@@ -1,8 +1,8 @@
 package com.sdc.three.ide;
 
-import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 
 import java.io.File;
@@ -25,11 +25,11 @@ import static java.nio.file.FileVisitResult.CONTINUE;
  * Since this object takes care of automatically updating files in the provided directories, there is no implicit
  * file adding methods as they are done by simply creating the files as would normally be done.
  *
- * For efficient saving of all changed files, it is recommended that one uses {@link #getFilesToSave()}, then calls
+ * For efficient saving of all changed files, it is recommended that one uses {@link #getPathsToSave()}, then calls
  * {@link #save(Path, String)} for each file.
  *
- * Files are added to {@link #filesToSave} when they are modified only. Newly created files are considered saved. When files
- * are removed from the directory, they are also similarly removed form {@link #filesToSave}
+ * Files are added to {@link #pathsToSave} when they are modified only. Newly created files are considered saved. When files
+ * are removed from the directory, they are also similarly removed form {@link #pathsToSave}
  *
  * @author Anthony Segedi
  */
@@ -37,7 +37,7 @@ public class Workspace implements Filesystem, FileChangeListener {
 
     private final Path dir;
     private final WatchThreadPool watchPool;
-    private final ObservableMap<Path, FileEvent> filesToSave = FXCollections.synchronizedObservableMap(FXCollections.observableHashMap());
+    private final ObservableList<Path> pathsToSave = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
     private final TreeItem<Path> root;
     private final LinkedList<FileChangeListener> listeners = new LinkedList<>();
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -54,18 +54,18 @@ public class Workspace implements Filesystem, FileChangeListener {
     @Override
     public void save(Path path, String string) throws IOException {
         Files.writeString(path, string, StandardOpenOption.TRUNCATE_EXISTING);
-        filesToSave.remove(path);
+        pathsToSave.remove(path);
     }
 
     @Override
-    public ReadOnlyMapWrapper<Path, FileEvent> getFilesToSave() {
-        return new ReadOnlyMapWrapper<>(filesToSave);
+    public ReadOnlyListWrapper<Path> getPathsToSave() {
+        return new ReadOnlyListWrapper<>(pathsToSave);
     }
 
     @Override
     public void filesystemChanged(Path path, FileEvent event) {
         if (event == MODIFIED) {
-            filesToSave.put(path, event);
+            pathsToSave.add(path);
         } else {
             TreeItem<Path> item = getClosestItem(path);
             switch(event) {
@@ -78,7 +78,7 @@ public class Workspace implements Filesystem, FileChangeListener {
                     lock.writeLock().unlock();
                     break;
                 case REMOVED:
-                    filesToSave.remove(path);
+                    pathsToSave.remove(path);
                     try {
                         lock.writeLock().lock();
                         final TreeItem<Path> toRemove = getItem(path);

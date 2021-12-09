@@ -1,8 +1,9 @@
 package com.sdc.three.ide;
 
+import javafx.beans.property.ReadOnlyListWrapper;
+
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
 
 public interface Filesystem {
 
@@ -14,5 +15,5 @@ public interface Filesystem {
      */
     void save(Path path, String string) throws IOException;
 
-    Map<Path, FileEvent> getFilesToSave();
+    ReadOnlyListWrapper<Path> getPathsToSave();
 }
