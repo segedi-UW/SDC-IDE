@@ -41,6 +41,16 @@ public class WatchThreadPool {
         return false;
     }
 
+    public boolean unregister(Path dir) {
+        // slow O(n) implementation as we do not expect to call often
+        for (final WatchKey key : dirs.keySet()) {
+            if (dirs.get(key).equals(dir)) {
+                return dirs.remove(key).equals(dir);
+            }
+        }
+        return false;
+    }
+
     private class WatchThread implements Runnable {
 
         private volatile boolean isRunning;
@@ -81,8 +91,7 @@ public class WatchThreadPool {
                 if (!key.reset()) {
                     dirs.remove(key);
                     if (dirs.size() < 1) {
-                        isRunning = false;
-                        return;
+                        System.err.println("Last directory removed from watch");
                     }
                 }
             }
