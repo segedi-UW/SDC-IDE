@@ -14,5 +14,5 @@ public interface Filesystem {
      */
     void save(Path path, String string) throws IOException;
 
-    Map<Path, FileEvent> getModifiedFiles();
+    Map<Path, FileEvent> getFilesToSave();
 }
