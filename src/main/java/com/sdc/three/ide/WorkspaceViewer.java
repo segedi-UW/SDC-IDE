@@ -12,6 +12,16 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The WorkspaceViewer class acts as the graphical UI wrapper for a Workspace.
+ *
+ * Workspace specific modification can be done by calling {@link #getWorkspace()}, which returns a {@link Workspace} object
+ *
+ * @see #getWorkspace()
+ * @see Workspace
+ *
+ * @author Anthony Segedi
+ */
 public class WorkspaceViewer extends TreeView<Path> {
 
     private Workspace workspace;
@@ -25,28 +35,36 @@ public class WorkspaceViewer extends TreeView<Path> {
     public WorkspaceViewer(Workspace workspace) {
         super();
         setCellFactory(view -> new TreeCellPathSkin());
-        setEditable(false);
+        setEditable(false); // can change in the future to rename file
         setShowRoot(true);
         setWorkspace(workspace);
-        refresh();
     }
 
     public Workspace getWorkspace() {
         return workspace;
     }
 
+    /**
+     * Initialize the mappings for file type to image for display
+     *
+     * @return initialized fileGraphics HashMap
+     */
     private static HashMap<String, Image> initFileGraphics() {
         HashMap<String, Image> map = new HashMap<>();
+        // Add custom images to the resources/.../images directory, then put the file into the map as seen below
         final String resourceDirectory = "images/";
         map.put(generalFileExtension, resourceToIcon(resourceDirectory + "file-gen.png"));
         map.put(File.separator, resourceToIcon(resourceDirectory + "directory.png"));
+        // custom mappings
         map.put(".java", resourceToIcon(resourceDirectory + "file-java.png"));
         map.put(".jpeg", resourceToIcon(resourceDirectory + "file-jpeg.png"));
         return map;
     }
 
     private static Image resourceToIcon(String resource) {
-        return new Image(App.toResourceURL(resource).toExternalForm(), 20.0, 20.0, true, true);
+        final double length = 20.0;
+        // square icon
+        return new Image(App.toResourceURL(resource).toExternalForm(), length, length, true, true);
     }
 
     public void setWorkspace(Workspace workspace) {
