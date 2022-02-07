@@ -1,6 +1,6 @@
 module com.sdc.tthree.sdcide {
-    requires javafx.controls;
-    requires javafx.fxml;
+    requires transitive javafx.controls;
+    requires transitive javafx.fxml;
     requires transitive javafx.graphics;
 
     requires org.controlsfx.controls;
