@@ -16,11 +16,13 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         mainStage = stage;
-        FXMLLoader fxmlLoader = toLoader("controller.fxml");
+        FXMLLoader fxmlLoader = toLoader("ui.fxml");
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         addDefaultStylesheets(scene);
         stage.setTitle("This is the title!");
         stage.setScene(scene);
+//        JMetro jMetro = new JMetro(Style.LIGHT);
+//        jMetro.setScene(scene);
         stage.show();
     }
 
