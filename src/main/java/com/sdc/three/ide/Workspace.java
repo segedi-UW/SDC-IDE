@@ -12,7 +12,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static com.sdc.three.ide.FileEvent.MODIFIED;
 import static java.nio.file.FileVisitResult.CONTINUE;
 
 /**
@@ -64,36 +63,34 @@ public class Workspace implements Filesystem, FileChangeListener {
 
     @Override
     public void filesystemChanged(Path path, FileEvent event) {
-        if (event == MODIFIED) {
-            pathsToSave.add(path);
-        } else {
-            TreeItem<Path> item = getClosestItem(path);
-            switch(event) {
-                case ADDED:
+        TreeItem<Path> item = getClosestItem(path);
+        switch (event) {
+            case MODIFIED:
+                pathsToSave.add(path);
+            case ADDED:
+                lock.writeLock().lock();
+                Path added = addPathTo(item, path);
+                if (added.toFile().isDirectory())
+                    if (!watchPool.register(added))
+                        System.err.println("Failed to register " + added);
+                lock.writeLock().unlock();
+                break;
+            case REMOVED:
+                pathsToSave.remove(path);
+                try {
                     lock.writeLock().lock();
-                    Path added = addPathTo(item, path);
-                    if (added.toFile().isDirectory())
-                        if (!watchPool.register(added))
-                            System.err.println("Failed to register " + added);
-                    lock.writeLock().unlock();
-                    break;
-                case REMOVED:
-                    pathsToSave.remove(path);
-                    try {
-                        lock.writeLock().lock();
-                        final TreeItem<Path> toRemove = getItem(path);
-                        final TreeItem<Path> parent = toRemove.getParent();
-                        if (!parent.getChildren().remove(toRemove)) {
-                            System.err.printf("WARNING: Failed to remove %s from %s", item.getValue(), parent.getValue());
-                        }
-                        if (path.toFile().isDirectory())
-                            watchPool.unregister(path);
-                    } catch (NoSuchElementException e) {
-                        System.err.printf("WARNING: Failed to remove %s, as %<s did not exist", item.getValue());
+                    final TreeItem<Path> toRemove = getItem(path);
+                    final TreeItem<Path> parent = toRemove.getParent();
+                    if (!parent.getChildren().remove(toRemove)) {
+                        System.err.printf("WARNING: Failed to remove %s from %s", item.getValue(), parent.getValue());
                     }
-                    lock.writeLock().unlock();
-                    break;
-            }
+                    if (path.toFile().isDirectory())
+                        watchPool.unregister(path);
+                } catch (NoSuchElementException e) {
+                    System.err.printf("WARNING: Failed to remove %s, as %<s did not exist", item.getValue());
+                }
+                lock.writeLock().unlock();
+                break;
         }
         if (!listeners.isEmpty()) {
             for (FileChangeListener listener : listeners) {
@@ -119,6 +116,7 @@ public class Workspace implements Filesystem, FileChangeListener {
      * contained in the Tree, then it returns the closest item
      * it can. This is synchronized with the ReadWriteLock for
      * thread safe use
+     * 
      * @param path The path to get the item of
      * @return The closest item, at the minimum the root of the tree
      */
@@ -144,25 +142,28 @@ public class Workspace implements Filesystem, FileChangeListener {
 
     /**
      * Similar to getClosestItem but throws an exception on not finding an item
+     * 
      * @param path the path to retrieve the item of
      * @return the TreeItem of the given path
      * @throws NoSuchElementException when the path is not contained in the tree
      */
     public TreeItem<Path> getItem(Path path) {
         TreeItem<Path> item = getClosestItem(path);
-        if (!item.getValue().equals(path)) throw new NoSuchElementException();
+        if (!item.getValue().equals(path))
+            throw new NoSuchElementException();
         return item;
     }
 
     private Path addPathTo(TreeItem<Path> item, Path path) {
         // lock should be held before entering here!
-        if (!lock.writeLock().isHeldByCurrentThread()) throw new IllegalStateException("Current thread does not hold the writeLock!");
+        if (!lock.writeLock().isHeldByCurrentThread())
+            throw new IllegalStateException("Current thread does not hold the writeLock!");
         if (item.getValue().equals(path)) {
             System.err.println("Path already exists in tree: " + path);
             return path;
         }
         Path toAdd = item.getValue().relativize(path);
-        for(Path p : toAdd) {
+        for (Path p : toAdd) {
             TreeItem<Path> next = new TreeItem<>(item.getValue().resolve(p));
             item.getChildren().add(next);
             item = next;
@@ -171,8 +172,10 @@ public class Workspace implements Filesystem, FileChangeListener {
     }
 
     private void validateWorkspace(File workspace) throws InvalidFileException {
-        if (workspace == null) throw new NullPointerException("Workspace cannot be null");
-        else if (!workspace.isDirectory()) throw new InvalidFileException("Provided file is not a directory");
+        if (workspace == null)
+            throw new NullPointerException("Workspace cannot be null");
+        else if (!workspace.isDirectory())
+            throw new InvalidFileException("Provided file is not a directory");
     }
 
     private void parseWorkspace() throws IOException {
